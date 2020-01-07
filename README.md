@@ -3,7 +3,7 @@
   - [1.1. NGINX Controller Agent Inside Docker Container](#11-nginx-controller-agent-inside-docker-container)
   - [1.2. Standalone Mode](#12-standalone-mode)
   - [1.3. Current Limitations](#13-current-limitations)
-- [2. How to Build and Run a Controller enabled NGINX image?](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
+- [2. How to Build and Run a Controller enabled NGINX image](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
   - [2.1. Building a Controller-enabled image with NGINX](#21-building-a-controller-enabled-image-with-nginx)
   - [2.2. Running a Controller-enabled NGINX Docker Container](#22-running-a-controller-enabled-nginx-docker-container)
 
@@ -22,13 +22,13 @@ In order to use Controller, a small Python-based agent software Controller Agent
 
 The official documentation for Controller is available [here](https://docs.nginx.com/nginx-controller/).
 
-### 1.1. NGINX Controller Agent Inside Docker Container 
+### 1.1. NGINX Controller Agent Inside Docker Container
 
 The Controller Agent can be deployed in a Docker environment to monitor and / or configure NGINX processes inside Docker containers.
 The agent can collect most of the metrics.
 
 The "agent-inside-the-container" is currenly the only mode of operation. In other words, the agent should be running in the same container as the NGINX process being managed / monitored.
-For more information, please refer to our [Controller Dockerfile repository](https://github.com/nginxinc/docker-nginx-controller.git). 
+For more information, please refer to our [Controller Dockerfile repository](https://github.com/nginxinc/docker-nginx-controller.git).
 
 ### 1.2. Standalone Mode
 
@@ -42,31 +42,33 @@ If you prefer to assign the individual instances started from the same image as 
 You can learn more about the agent configuration options following the documentation link of your NGINX Controller.
 
   ```
+  # If HOSTNAME is set, the startup wrapper script will use it to
+  # generate the 'hostname' to put in the /etc/controller-agent/agent.conf
   # If IMAGENAME is set, the startup wrapper script will use it to
-  # generate the 'imagename' to put in the /etc/controller-agent/agent.conf
-  # If several instances use the same 'imagename', the metrics will
-  # be aggregated into a single object in NGINX Controller (not recommended nor supported).
-  # use unique imagename per instance to have the best reporting and monitoring experience.
+  # override the 'hostname' in the /etc/controller-agent/agent.conf
+
+  # Each container must have a unique `hostname` and unique `imagename` for data to reflect correctly in Controller
+
+  ENV HOSTNAME my-docker-instance-123
   
-  ENV IMAGENAME my-docker-instance-123
+  # unique imagenames are useful when the automatically generated hostname overlaps between instances.
   ```
 
-  or
+  or environment settings can be passed at contianer launch time:
 
-  * Use the `-e` option with `docker run` as in
+- Use the `-e` option with `docker run` as in
 
   ```
   docker run --name mynginx1 -e API_KEY=1234567890 -e IMAGENAME=my-instance-123 -d nginx-agent
   ```
 
-### 1.3. Current Limitations 
+### 1.3. Current Limitations
 
 The following list summarizes existing limitations of monitoring containers with NGINX Controller:
 
- * In the unsupported "aggregate" mode, some of the OS metrics and metadata are not collected (e.g. hostnames, CPU usage, Disk I/O metrics, network interface configuration).
- * The agent can only monitor NGINX from inside the container. It is not currently possible to run the agent in a separate container and monitor the neighboring containers running NGINX.
- 
-## 2. How to Build and Run a Controller enabled NGINX image?
+- The agent can only monitor NGINX from inside the container. It is not currently possible to run the agent in a separate container and monitor the neighboring containers running NGINX.
+
+## 2. How to Build and Run a Controller enabled NGINX image
 
 ### 2.1. Building a Controller-enabled image with NGINX
 
