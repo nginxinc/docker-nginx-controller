@@ -6,6 +6,7 @@
 - [2. How to Build and Run a Controller enabled NGINX image](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
   - [2.1. Building a Controller-enabled image with NGINX](#21-building-a-controller-enabled-image-with-nginx)
   - [2.2. Running a Controller-enabled NGINX Docker Container](#22-running-a-controller-enabled-nginx-docker-container)
+- [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -185,3 +186,8 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 7d7b47ba4c72        nginx-agent       "/entrypoint.sh"         22 minutes ago      Exited (137) 19 seconds ago                       mynginx1
 ```
 
+## Support
+
+This project is not covered by the NGINX Plus support contract
+
+This is currently considered *experimental* it has been validated with Controller 2.8+ agent and was adapted from the Amplify guidance.
