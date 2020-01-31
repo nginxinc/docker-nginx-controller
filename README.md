@@ -6,6 +6,7 @@
 - [2. How to Build and Run a Controller enabled NGINX image](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
   - [2.1. Building a Controller-enabled image with NGINX](#21-building-a-controller-enabled-image-with-nginx)
   - [2.2. Running a Controller-enabled NGINX Docker Container](#22-running-a-controller-enabled-nginx-docker-container)
+  - [3.0 Adding agent during container run](#30-adding-agent-during-container-run)
 - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -22,6 +23,9 @@ With Controller it is possible to collect and aggregate metrics across NGINX ins
 In order to use Controller, a small Python-based agent software Controller Agent should be installed inside the container alongside NGINX Plus.
 
 The official documentation for Controller is available [here](https://docs.nginx.com/nginx-controller/).
+
+Guidance around NGINX Plus is available [here](https://www.nginx.com/blog/deploying-nginx-nginx-plus-docker/).
+Note: When building NGINX Plus into a container, be certain to remove repository credentials from your container. 
 
 ### 1.1. NGINX Controller Agent Inside Docker Container
 
@@ -185,6 +189,33 @@ docker ps -a
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                        PORTS               NAMES
 7d7b47ba4c72        nginx-agent       "/entrypoint.sh"         22 minutes ago      Exited (137) 19 seconds ago                       mynginx1
 ```
+### 3.0 Adding agent during container run
+
+An alternate way to handle agent within Containers is to include the necessary Controller Agent commands in the run command for the container.
+This way you don't have to build the agent into your Container prior to running.
+
+Alternate Dockerfile
+```
+# Start container with environment variables for CTRL_HOST and API_KEY
+#
+# docker build -t nginx-ctrl .
+# docker run --name apigw --hostname apigw -e CTRL_HOST=10.20.30.40 -e API_KEY=deadbeef -d -P nginx-ctrl
+ 
+FROM nginx-plus
+ 
+# Install everything we will need to install the Controller Agent so that the container can start quickly
+RUN apt-get update && apt install -y curl python gnupg2 procps dh-python distro-info-data libmpdec2 libpython3-stdlib libpython3.5-minimal libpython3.5-stdlib lsb-release python3 python3-minimal python3.5 python3.5-minimal
+ 
+EXPOSE 80 443 8080
+STOPSIGNAL SIGTERM
+ 
+WORKDIR /controller
+RUN printf "curl -skSL https://\$CTRL_HOST:8443/1.4/install/controller/ | bash -s - -y\nnginx -g 'daemon off;'" > start
+CMD ["sh", "/controller/start"]
+```
+
+It takes 1-2 minutes to start the container. After `docker run …` use `docker logs --follow CONTAINER` to watch install/startup progress.
+
 
 ## Support
 
