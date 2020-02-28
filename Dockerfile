@@ -5,22 +5,32 @@ LABEL maintainer="NGINX Controller Engineering"
 ARG cert=nginx-repo.crt
 ARG key=nginx-repo.key
 
-ENV API_KEY='1234567890'
-ENV CONTROLLER_URL="https://<fqdn>:8443/1.4"
+# e.g '1234567890'
+ARG API_KEY 
+ENV ENV_API_KEY=$API_KEY
+
+# e.g https://<fqdn>:8443/1.4
+ARG CONTROLLER_URL
+ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
+
+
 
 # Download certificate and key from the customer portal (https://cs.nginx.com)
 # and copy to the build context
+RUN mkdir -p /etc/nginx/sites-enabled/ 
 COPY $cert /etc/ssl/nginx/
 COPY $key /etc/ssl/nginx/
-COPY stub_status.conf /etc/nginx/conf.d/
+COPY stub_status.conf /etc/nginx/sites-enabled/ 
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY ./entrypoint.sh /
 
 # Install NGINX Plus
 # Install NGINX Plus
-RUN set -x \
+RUN set -ex \
   && apt-get update && apt-get upgrade -y \
-  && apt-get install --no-install-recommends --no-install-suggests -y apt-transport-https ca-certificates gnupg1 \
+  && apt-get install --no-install-recommends --no-install-suggests -y curl sudo vim procps  apt-utils apt-transport-https ca-certificates gnupg1 dh-python distro-info-data libmpdec2 libpython-stdlib libpython3-stdlib \
+  libpython3.5-minimal libpython3.5-stdlib lsb-release python python-minimal \
+  python3 python3-minimal python3.5 python3.5-minimal binutils net-tools \
   && \
   NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
   found=''; \
@@ -39,19 +49,16 @@ RUN set -x \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslCert     \"/etc/ssl/nginx/nginx-repo.crt\";" >> /etc/apt/apt.conf.d/90nginx \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
   && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
-  && apt-get update && apt-get install -y nginx-plus \
-  && apt-get remove --purge --auto-remove -y gnupg1 \
+  && apt-get update && apt-get install -y nginx-plus  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
-  && sh ./install.sh \
-  # remove nginx plus repo secrets
-  && rm -rf /etc/ssl/nginx  
+  && sh ./install.sh 
+
 
 # Forward request logs to Docker log collector
-RUN  
-  && ln -sf /dev/stdout /var/log/nginx/access.log \
+RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
   && ln -sf /dev/stderr /var/log/nginx/error.log 
 
 
