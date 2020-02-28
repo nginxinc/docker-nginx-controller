@@ -20,14 +20,14 @@ nginx -g "daemon off;" &
 
 nginx_pid=$!
 
-test -n "${API_KEY}" && \
-    api_key=${API_KEY}
+test -n "${ENV_API_KEY}" && \
+    api_key=${ENV_API_KEY}
 
 test -n "${CONTROLLER_IMAGENAME}" && \
     controller_imagename=${CONTROLLER_IMAGENAME}
 
-test -n "${CONTROLLER_URL}" && \
-    controller_url=${CONTROLLER_URL}
+test -n "${ENV_CONTROLLER_URL}" && \
+    controller_url=${ENV_CONTROLLER_URL}
 
 if [ -n "${api_key}" -o -n "${controller_imagename}" -o -n "${controller_url}" ]; then
     echo "updating ${agent_conf_file} ..."
@@ -47,7 +47,7 @@ if [ -n "${api_key}" -o -n "${controller_imagename}" -o -n "${controller_url}" ]
     echo " ---> using imagename = ${controller_imagename}" && \
     sh -c "sed -i.old -e 's/imagename.*$/imagename = $controller_imagename/' \
 	${agent_conf_file}"
-
+    
     test -n "${controller_url}" && \
     echo " ---> using controller = ${controller_url}" && \
     sh -c "sed -i.old -e 's@api_url.*@api_url = $controller_url@' \
