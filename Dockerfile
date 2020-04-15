@@ -54,7 +54,7 @@ RUN set -ex \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
-  && sh ./install.sh 
+  && sh ./install.sh -y
 
 
 # Forward request logs to Docker log collector
