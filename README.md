@@ -39,7 +39,7 @@ For more information, please refer to our [Controller Dockerfile repository](htt
 
 By default the agent will try to determine the OS `hostname` on startup. The `hostname` is used to generate a UUID to uniquely identify the NGINX instance in NGINX Controller.  When the Agent is run inside of a container the hostname is the shortened Docker Container ID on the host where the container is running.
 
-If the `hostname` is set, it is also advisable to set `store_uuid=true`  This additional setting will persist the defined `hostname` and a dynamically generated uuid identifier together.  This additional setting allows the container instance to be stopped and started or persist if the container host is rebooted.
+If the `hostname` is set, it is also advisable to set `STORE_UUID=True`  This additional setting will persist the defined `hostname` and a dynamically generated uuid identifier together.  This additional setting allows the container instance to be stopped and started or persist if the container host is rebooted.
 
 This means that each new container started from a Controller-enabled Docker image will be reported as a standalone system in the Controller Console.
 This is the recommended configuration, as Controller will aggregate metrics across your instances based on the application, application component, location, environment, and so on.
