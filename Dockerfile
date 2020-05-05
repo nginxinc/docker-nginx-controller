@@ -2,9 +2,6 @@ FROM debian:stretch-slim
 
 LABEL maintainer="NGINX Controller Engineering"
 
-ARG cert=nginx-repo.crt
-ARG key=nginx-repo.key
-
 # e.g '1234567890'
 ARG API_KEY 
 ENV ENV_API_KEY=$API_KEY
@@ -13,18 +10,16 @@ ENV ENV_API_KEY=$API_KEY
 ARG CONTROLLER_URL
 ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 
+# e.g True or False
+ARG STORE_UUID=False
+ENV ENV_STORE_UUID=$STORE_UUID
 
-
-# Download certificate and key from the customer portal (https://cs.nginx.com)
+# Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
-RUN mkdir -p /etc/nginx/sites-enabled/ 
-COPY $cert /etc/ssl/nginx/
-COPY $key /etc/ssl/nginx/
-COPY stub_status.conf /etc/nginx/sites-enabled/ 
+COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY ./entrypoint.sh /
 
-# Install NGINX Plus
 # Install NGINX Plus
 RUN set -ex \
   && apt-get update && apt-get upgrade -y \
