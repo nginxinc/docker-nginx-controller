@@ -158,7 +158,7 @@ If you see the **controller-agent** process, it all went smoothly, and you shoul
 Check the Controller Agent log:
 
 ```bash
-docker exec 7d7b47ba4c72 tail /var/log/contorller-agent/agent.log
+docker exec 7d7b47ba4c72 tail /var/log/nginx-controller/agent.log
 ```
 
 ```bash
