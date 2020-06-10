@@ -11,7 +11,7 @@ agent_conf_file="/etc/controller-agent/agent.conf"
 agent_log_file="/var/log/nginx-controller/agent.log"
 nginx_status_conf="/etc/nginx/conf.d/stub_status.conf"
 api_key=""
-controller_imagename=""
+controller_hostname=""
 controller_url=""
 
 # Launch nginx
@@ -23,13 +23,18 @@ nginx_pid=$!
 test -n "${ENV_API_KEY}" && \
     api_key=${ENV_API_KEY}
 
-test -n "${CONTROLLER_IMAGENAME}" && \
-    controller_imagename=${CONTROLLER_IMAGENAME}
+# if controller_hostname is defined in the env vars, use it
+test -n "${ENV_CONTROLLER_HOSTNAME}" && \
+    controller_hostname=${ENV_CONTROLLER_HOSTNAME}
+
+# if controller_hostname is not defined in the env vars, fail back to hostname
+test -z "${controller_hostname}" && \ 
+    controller_hostname=$(hostname -f)
 
 test -n "${ENV_CONTROLLER_URL}" && \
     controller_url=${ENV_CONTROLLER_URL}
 
-if [ -n "${api_key}" -o -n "${controller_imagename}" -o -n "${controller_url}" ]; then
+if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" ]; then
     echo "updating ${agent_conf_file} ..."
 
     if [ ! -f "${agent_conf_file}" ]; then
@@ -43,9 +48,9 @@ if [ -n "${api_key}" -o -n "${controller_imagename}" -o -n "${controller_url}" ]
     sh -c "sed -i.old -e 's/api_key.*$/api_key = $api_key/' \
 	${agent_conf_file}"
 
-    test -n "${controller_imagename}" && \
-    echo " ---> using imagename = ${controller_imagename}" && \
-    sh -c "sed -i.old -e 's/imagename.*$/imagename = $controller_imagename/' \
+    test -n "${controller_hostname}" && \
+    echo " ---> using hostname = ${controller_hostname}" && \
+    sh -c "sed -i.old -e 's/instance_name.*$/instance_name = $controller_hostname/' \
 	${agent_conf_file}"
     
     test -n "${controller_url}" && \
