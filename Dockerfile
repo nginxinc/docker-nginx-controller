@@ -14,6 +14,10 @@ ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 ARG STORE_UUID=False
 ENV ENV_STORE_UUID=$STORE_UUID
 
+# e.g Instance location already defined in Controller
+ARG LOCATION
+ENV ENV_LOCATION=$LOCATION
+
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
 COPY nginx-repo.* /etc/ssl/nginx/
@@ -44,7 +48,8 @@ RUN set -ex \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslCert     \"/etc/ssl/nginx/nginx-repo.crt\";" >> /etc/apt/apt.conf.d/90nginx \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
   && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
-  && apt-get update && apt-get install -y nginx-plus  \
+  # NGINX Javascript module needed for APIM
+  && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
