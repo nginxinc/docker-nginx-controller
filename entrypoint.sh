@@ -13,6 +13,7 @@ nginx_status_conf="/etc/nginx/conf.d/stub_status.conf"
 api_key=""
 controller_hostname=""
 controller_url=""
+location=""
 
 # Launch nginx
 echo "starting nginx ..."
@@ -34,7 +35,10 @@ test -z "${controller_hostname}" && \
 test -n "${ENV_CONTROLLER_URL}" && \
     controller_url=${ENV_CONTROLLER_URL}
 
-if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" ]; then
+test -n "${ENV_LOCATION}" && \
+    location=${ENV_LOCATION}
+
+if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" -o -n "${location}" ]; then
     echo "updating ${agent_conf_file} ..."
 
     if [ ! -f "${agent_conf_file}" ]; then
@@ -56,6 +60,11 @@ if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" ];
     test -n "${controller_url}" && \
     echo " ---> using controller = ${controller_url}" && \
     sh -c "sed -i.old -e 's@api_url.*@api_url = $controller_url@' \
+	${agent_conf_file}"
+
+    test -n "${location}" && \
+    echo " ---> using location = ${location}" && \
+    sh -c "sed -i.old -e 's/location_name.*$/location_name = $location/' \
 	${agent_conf_file}"
 
     test -f "${agent_conf_file}" && \
