@@ -90,7 +90,7 @@ copy your NGINX Plus repositry certificate and key to the cloned folder.
 Edit the Dockerfile with your API_KEY and ENV_CONTROLLER_URL
 
 ```bash
-docker build --build-arg CONTROLLER_URL=<url>/1.4 --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
+docker build --build-arg CONTROLLER_URL=https://<fqdn>:8443/1.4 --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
 ```
 
 After the image is built, check the list of Docker images:
