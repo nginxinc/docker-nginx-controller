@@ -6,6 +6,7 @@
 # be aggregated into a single object in Controller. Otherwise NGINX Controller
 # will create separate objects for monitoring (an object per instance).
 
+
 # Variables
 agent_conf_file="/etc/controller-agent/agent.conf"
 agent_log_file="/var/log/nginx-controller/agent.log"
@@ -14,6 +15,17 @@ api_key=""
 controller_hostname=""
 controller_url=""
 location=""
+
+handle_term()
+{
+    echo "received TERM signal"
+    echo "stopping controller-agent ..."
+    service controller-agent stop
+    echo "stopping nginx ..."
+    kill -TERM "${nginx_pid}" 2>/dev/null
+}
+
+trap 'handle_term' TERM
 
 # Launch nginx
 echo "starting nginx ..."
@@ -29,7 +41,7 @@ test -n "${ENV_CONTROLLER_HOSTNAME}" && \
     controller_hostname=${ENV_CONTROLLER_HOSTNAME}
 
 # if controller_hostname is not defined in the env vars, fail back to hostname
-test -z "${controller_hostname}" && \ 
+test -z "${controller_hostname}" && \
     controller_hostname=$(hostname -f)
 
 test -n "${ENV_CONTROLLER_URL}" && \
@@ -56,7 +68,7 @@ if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" -o
     echo " ---> using hostname = ${controller_hostname}" && \
     sh -c "sed -i.old -e 's/instance_name.*$/instance_name = $controller_hostname/' \
 	${agent_conf_file}"
-    
+
     test -n "${controller_url}" && \
     echo " ---> using controller = ${controller_url}" && \
     sh -c "sed -i.old -e 's@api_url.*@api_url = $controller_url@' \
@@ -88,6 +100,14 @@ if [ $? != 0 ]; then
     exit 1
 fi
 
-wait ${nginx_pid}
+wait_term()
+{
+    wait ${nginx_pid}
+    trap - TERM
+    echo "wait for nginx to stop..."
+    wait ${nginx_pid}
+}
+
+wait_term
 
 echo "nginx master process has stopped, exiting."
