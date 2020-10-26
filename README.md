@@ -224,6 +224,8 @@ CMD ["sh", "/controller/start"]
 ```
 
 It takes 1-2 minutes to start the container. After `docker run �` use `docker logs --follow CONTAINER` to watch install/startup progress.
+Working alternate, and `nginx-plus` example Dockerfiles could be found here:
+- debian/examples/
 
 ## Support
 
