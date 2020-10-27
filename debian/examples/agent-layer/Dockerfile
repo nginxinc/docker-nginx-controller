@@ -16,6 +16,14 @@ EXPOSE 80 443 8080
 STOPSIGNAL SIGTERM
 
 WORKDIR /controller
-RUN printf "curl -skSL https://\$CTRL_HOST:8443/1.4/install/controller/ | bash -s - -y\nnginx -g 'daemon off;'" > start
+
+# This script will download install and start the agent using `service controller-agent start` command.
+# Agent service should be stopped gracefully using `service controller-agent stop` command, which
+# is not done in this example as a solution strictly depends on the form of cmd/entrypoint of the base image.
+# Example solution for multiple service management in docker image could be found in official docker
+# documentation:
+# https://docs.docker.com/config/containers/multi-service_container
+RUN printf "curl -skSL https://\$CTRL_HOST:8443/1.4/install/controller/ | bash -s - -y\n exec nginx -g 'daemon off;'" > start
+
 CMD ["sh", "/controller/start"]
 
