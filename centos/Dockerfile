@@ -46,7 +46,7 @@ RUN set -ex \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
-  # Skip launching agent as part of the service
+  # TODO: remove once launching agent using `service` has been handled in the install script
   && sed -i '/^# Unconditionally stop the agent service/,$d' install.sh \
   && sh ./install.sh -y
 
