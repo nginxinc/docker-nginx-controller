@@ -37,9 +37,9 @@ For more information, please refer to our [Controller Dockerfile repository](htt
 
 ### 1.2. Standalone Mode
 
-By default the agent will try to determine the OS `hostname` on startup. The `hostname` is used to generate a UUID to uniquely identify the NGINX instance in NGINX Controller.  When the Agent is run inside of a container the hostname is the shortened Docker Container ID on the host where the container is running.
+By default the agent will try to determine the OS hostname during installation using the `hostname -f` command. The hostname value will then be assigned to the `instance_name` key in the agent configuration file (`agent.conf`) and further used to generate a UUID, which together with an instance name provide a means of uniquely identifying the NGINX instance in NGINX Controller. When the Agent is run inside of a container the default hostname is a shortened Docker Container ID on the host where the container is running. The automatically assigned instance_name can be overridden on runtime by setting the `ENV_CONTROLLER_INSTANCE_NAME` environment variable to the desired value. 
 
-If the `hostname` is set, it is also advisable to set `STORE_UUID=True`  This additional setting will persist the defined `hostname` and a dynamically generated uuid identifier together.  This additional setting allows the container instance to be stopped and started or persist if the container host is rebooted. You should also add the `--hostname` docker parameter for this to work.
+Using the optional build-time setting of `STORE_UUID=True` will also make sure that the dynamically generated UUID is persisted in the agent configuration. This, together with the `instance_name`, allows the container instance to be stopped and started or persist if the container host is rebooted.
 
 This means that each new container started from a Controller-enabled Docker image will be reported as a standalone system in the Controller Console.
 This is the recommended configuration, as Controller will aggregate metrics across your instances based on the application, application component, location, environment, and so on.
@@ -59,7 +59,7 @@ You can learn more about the agent configuration options following the documenta
 - Use the `-e` option with `docker run` as in
 
   ```bash
-  docker run --name mynginx1 -e ENV_API_KEY=1234567890 -e HOSTNAME=my-instance-123 --hostname=my-instance-123 -d nginx-agent
+  docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
   ```
 
 ### 1.3. Current Limitations
@@ -121,11 +121,11 @@ sudo docker build --build-arg CONTROLLER_URL=https://<DNS>:8443/1.4 --build-arg 
 To start a container from the new image, use the command below:
 
 ```bash
-docker run --name mynginx1 --hostname=mynginx1 -d nginx-agent
+docker run --name mynginx1 -e ENV_CONTROLLER_INSTANCE_NAME=mynginx1 -d nginx-agent
 ```
 
-Providing the hostname setting for the container sets the name of the container that will be displayed in NGINX Controller for the displayName of the instance.  The hostname will also be set as the instance object name, which is used in configuration references.
-If you do not provide a hostname the containerID is registered as the instance name and displayName within NGINX Controller.
+Providing the `ENV_CONTROLLER_INSTANCE_NAME` variable for the container sets the name of the container that will be displayed in NGINX Controller for the displayName of the instance. This will also be set as the instance object name, which is used in configuration references.
+If you do not override the default instance name, the containerID will be registered as the instance name and displayName within NGINX Controller.
 
 After the container has started, you may check its status with `docker ps`:
 

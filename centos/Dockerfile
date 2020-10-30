@@ -4,7 +4,7 @@ LABEL maintainer="NGINX Controller Engineering"
 
 # e.g '1234567890'
 ARG API_KEY 
-ENV ENV_API_KEY=$API_KEY
+ENV ENV_CONTROLLER_API_KEY=$API_KEY
 
 # e.g https://<fqdn>:8443/1.4
 ARG CONTROLLER_URL
