@@ -83,11 +83,7 @@ git clone https://github.com/nginxinc/docker-nginx-controller.git
 ```
 
 ```bash
-cd docker-nginx-controller/debian 
-```
-or
-```bash
-cd docker-nginx-controller/centos 
+cd docker-nginx-controller/<os> 
 ```
 
 copy your NGINX Plus repositry certificate and key to the cloned folder.  
