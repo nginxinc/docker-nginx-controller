@@ -7,7 +7,7 @@ LABEL maintainer="NGINX Controller Engineering"
 
 # e.g '1234567890'
 ARG API_KEY
-ENV ENV_API_KEY=$API_KEY
+ENV ENV_CONTROLLER_API_KEY=$API_KEY
 
 # e.g https://<fqdn>:8443/1.4
 ARG CONTROLLER_URL
@@ -15,11 +15,11 @@ ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 
 # e.g True or False
 ARG STORE_UUID=False
-ENV ENV_STORE_UUID=$STORE_UUID
+ENV ENV_CONTROLLER_STORE_UUID=$STORE_UUID
 
 # e.g Instance location already defined in Controller
 ARG LOCATION
-ENV ENV_LOCATION=$LOCATION
+ENV ENV_CONTROLLER_LOCATION=$LOCATION
 
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context

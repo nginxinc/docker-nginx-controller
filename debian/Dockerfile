@@ -12,11 +12,11 @@ ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 
 # e.g True or False
 ARG STORE_UUID=False
-ENV ENV_STORE_UUID=$STORE_UUID
+ENV ENV_CONTROLLER_STORE_UUID=$STORE_UUID
 
 # e.g Instance location already defined in Controller
 ARG LOCATION
-ENV ENV_LOCATION=$LOCATION
+ENV ENV_CONTROLLER_LOCATION=$LOCATION
 
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
