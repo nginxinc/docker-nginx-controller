@@ -12,7 +12,7 @@ agent_conf_file="/etc/controller-agent/agent.conf"
 agent_log_file="/var/log/nginx-controller/agent.log"
 nginx_status_conf="/etc/nginx/conf.d/stub_status.conf"
 api_key=""
-controller_hostname=""
+instance_name=""
 controller_url=""
 location=""
 
@@ -33,16 +33,12 @@ nginx -g "daemon off;" &
 
 nginx_pid=$!
 
-test -n "${ENV_API_KEY}" && \
-    api_key=${ENV_API_KEY}
+test -n "${ENV_CONTROLLER_API_KEY}" && \
+    api_key=${ENV_CONTROLLER_API_KEY}
 
-# if controller_hostname is defined in the env vars, use it
-test -n "${ENV_CONTROLLER_HOSTNAME}" && \
-    controller_hostname=${ENV_CONTROLLER_HOSTNAME}
-
-# if controller_hostname is not defined in the env vars, fail back to hostname
-test -z "${controller_hostname}" && \
-    controller_hostname=$(hostname -f)
+# if instance_name is defined in the env vars, use it
+test -n "${ENV_CONTROLLER_INSTANCE_NAME}" && \
+    instance_name=${ENV_CONTROLLER_INSTANCE_NAME}
 
 test -n "${ENV_CONTROLLER_URL}" && \
     controller_url=${ENV_CONTROLLER_URL}
@@ -50,7 +46,7 @@ test -n "${ENV_CONTROLLER_URL}" && \
 test -n "${ENV_LOCATION}" && \
     location=${ENV_LOCATION}
 
-if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" -o -n "${location}" ]; then
+if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_url}" -o -n "${location}" ]; then
     echo "updating ${agent_conf_file} ..."
 
     if [ ! -f "${agent_conf_file}" ]; then
@@ -64,9 +60,9 @@ if [ -n "${api_key}" -o -n "${controller_hostname}" -o -n "${controller_url}" -o
     sh -c "sed -i.old -e 's/api_key.*$/api_key = $api_key/' \
 	${agent_conf_file}"
 
-    test -n "${controller_hostname}" && \
-    echo " ---> using hostname = ${controller_hostname}" && \
-    sh -c "sed -i.old -e 's/instance_name.*$/instance_name = $controller_hostname/' \
+    test -n "${instance_name}" && \
+    echo " ---> using instance_name = ${instance_name}" && \
+    sh -c "sed -i.old -e 's/instance_name.*$/instance_name = $instance_name/' \
 	${agent_conf_file}"
 
     test -n "${controller_url}" && \
