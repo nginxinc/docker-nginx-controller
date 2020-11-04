@@ -3,7 +3,7 @@ FROM amazonlinux:2
 LABEL maintainer="NGINX Controller Engineering"
 
 # e.g '1234567890'
-ARG API_KEY 
+ARG API_KEY
 ENV ENV_CONTROLLER_API_KEY=$API_KEY
 
 # e.g https://<fqdn>:8443/1.4
@@ -35,9 +35,6 @@ RUN set -ex \
     sudo \
     jq \
     net-tools \
-    python27 \
-    python27-devel \
-    python27-distribute \
     redhat-lsb \
     tar \
     wget \
@@ -66,7 +63,7 @@ RUN set -ex \
 
 # Forward request logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
-  && ln -sf /dev/stderr /var/log/nginx/error.log 
+  && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY ./entrypoint.sh /
 

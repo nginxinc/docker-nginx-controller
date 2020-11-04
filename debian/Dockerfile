@@ -27,9 +27,8 @@ COPY ./entrypoint.sh /
 # Install NGINX Plus
 RUN set -ex \
   && apt-get update && apt-get upgrade -y \
-  && apt-get install --no-install-recommends --no-install-suggests -y curl sudo vim procps  apt-utils apt-transport-https ca-certificates gnupg1 dh-python distro-info-data libmpdec2 libpython-stdlib libpython3-stdlib \
-  libpython3.5-minimal libpython3.5-stdlib lsb-release python python-minimal \
-  python3 python3-minimal python3.5 python3.5-minimal binutils net-tools \
+  && apt-get install --no-install-recommends --no-install-suggests -y curl sudo procps apt-utils apt-transport-https ca-certificates gnupg1 distro-info-data libmpdec2 \
+  lsb-release python python-minimal binutils net-tools \
   && \
   NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
   found=''; \

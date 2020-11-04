@@ -7,7 +7,7 @@ FROM nginx-plus
 # Install everything we will need to install the Controller Agent so that the container can start quickly
 RUN apt-get update &&\
         apt install -y \
-        curl python gnupg2 procps distro-info-data libmpdec2 \
+        curl gnupg procps distro-info-data libmpdec2 \
         lsb-release sudo
 
 EXPOSE 80 443 8080

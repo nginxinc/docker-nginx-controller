@@ -9,7 +9,7 @@ COPY nginx-repo.key /etc/ssl/nginx/
 # Install NGINX Plus
 RUN set -ex \
   && yum -y update && yum -y upgrade \
-  && yum -y install sudo procps ca-certificates gnupg python2 wget python3 binutils net-tools \
+  && yum -y install sudo procps ca-certificates gnupg wget binutils net-tools \
   && \
   NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
   found=''; \
