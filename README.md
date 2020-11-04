@@ -104,7 +104,7 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 nginx-agent       latest              d039b39d2987        3 minutes ago       241.6 MB
 ```
 
-Alternately, you can set the VAR store_uuid=True during the image build process.
+Alternately, you can set the VAR STORE_UUID=True during the image build process.
 This has the effect of persisting the instance displayName in NGINX Controller through container stop and start actions.  
 The displayName will default to the hostname of the machine.
 

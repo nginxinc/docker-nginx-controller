@@ -37,13 +37,13 @@ test -n "${ENV_CONTROLLER_API_KEY}" && \
 
 # if instance_name is defined in the env vars, use it
 test -n "${ENV_CONTROLLER_INSTANCE_NAME}" && \
-    controller_hostname=${ENV_CONTROLLER_INSTANCE_NAME}
+    instance_name=${ENV_CONTROLLER_INSTANCE_NAME}
 
 test -n "${ENV_CONTROLLER_URL}" && \
     controller_url=${ENV_CONTROLLER_URL}
 
-test -n "${ENV_LOCATION}" && \
-    location=${ENV_LOCATION}
+test -n "${ENV_CONTROLLER_LOCATION}" && \
+    location=${ENV_CONTROLLER_LOCATION}
 
 if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_url}" -o -n "${location}" ]; then
     echo "updating ${agent_conf_file} ..."
