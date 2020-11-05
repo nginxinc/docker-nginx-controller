@@ -86,6 +86,7 @@ fi
 
 if ! grep '^api_key.*=[ ]*[[:alnum:]].*' ${agent_conf_file} > /dev/null 2>&1; then
     echo "no api_key found in ${agent_conf_file}! exiting."
+    exit 1
 fi
 
 echo "starting controller-agent ..."

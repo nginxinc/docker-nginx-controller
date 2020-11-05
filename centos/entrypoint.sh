@@ -63,7 +63,7 @@ if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_url}" -o -n "$
     echo " ---> using instance_name = ${instance_name}" && \
     sh -c "sed -i.old -e 's/instance_name.*$/instance_name = $instance_name/' \
 	${agent_conf_file}"
-    
+
     test -n "${controller_url}" && \
     echo " ---> using controller = ${controller_url}" && \
     sh -c "sed -i.old -e 's@api_url.*@api_url = $controller_url@' \
@@ -85,6 +85,7 @@ fi
 
 if ! grep '^api_key.*=[ ]*[[:alnum:]].*' ${agent_conf_file} > /dev/null 2>&1; then
     echo "no api_key found in ${agent_conf_file}! exiting."
+    exit 1
 fi
 
 echo "starting controller-agent ..."
