@@ -6,7 +6,7 @@
 - [2. How to Build and Run a Controller enabled NGINX image](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
   - [2.1. Building a Controller-enabled image with NGINX](#21-building-a-controller-enabled-image-with-nginx)
   - [2.2. Running a Controller-enabled NGINX Docker Container](#22-running-a-controller-enabled-nginx-docker-container)
-  - [3.0 Adding agent during container run](#30-adding-agent-during-container-run)
+- [3.0 Adding agent during container run](#30-adding-agent-during-container-run)
 - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -25,7 +25,9 @@ In order to use Controller, a small Python-based agent software Controller Agent
 The official documentation for Controller is available [here](https://docs.nginx.com/nginx-controller/).
 
 Guidance around NGINX Plus is available [here](https://www.nginx.com/blog/deploying-nginx-nginx-plus-docker/).
-Note: When building NGINX Plus into a container, be certain to remove repository credentials from your container. 
+
+Dockerfiles contained in this repository are supporting and tested against NGINX Controller version >= 3.10.
+Note: When building NGINX Plus into a container, be certain to remove repository credentials from your container.
 
 ### 1.1. NGINX Controller Agent Inside Docker Container
 
@@ -46,21 +48,21 @@ This is the recommended configuration, as Controller will aggregate metrics acro
 
 You can learn more about the agent configuration options following the documentation link of your NGINX Controller.
 
-  ```bash
-  # If HOSTNAME is set, the startup wrapper script will use it to
-  # generate the 'hostname' to put in the /etc/controller-agent/agent.conf
+```bash
+# If HOSTNAME is set, the startup wrapper script will use it to
+# generate the 'hostname' to put in the /etc/controller-agent/agent.conf
 
-  ENV HOSTNAME my-docker-instance-123
-  
-  ```
+ENV HOSTNAME my-docker-instance-123
+
+```
 
   or environment settings can be passed at container launch time:
 
 - Use the `-e` option with `docker run` as in
 
-  ```bash
-  docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
-  ```
+    ```bash
+    docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
+    ```
 
 ### 1.3. Current Limitations
 
@@ -193,7 +195,7 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 7d7b47ba4c72        nginx-agent       "/entrypoint.sh"         22 minutes ago      Exited (137) 19 seconds ago                       mynginx1
 ```
 
-### 3.0 Adding agent during container run
+## 3.0 Adding agent during container run
 
 An alternate way to handle agent within Containers is to include the necessary Controller Agent commands in the run command for the container.
 This way you don't have to build the agent into your Container prior to running.

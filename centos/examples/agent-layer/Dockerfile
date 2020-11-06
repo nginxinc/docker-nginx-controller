@@ -1,7 +1,7 @@
 FROM nginx-plus
 
 # Install everything we will need to install the Controller Agent so that the container can start quickly
-RUN yum update && yum -y install sudo procps ca-certificates gnupg python2 wget python3 binutils net-tools
+RUN yum update && yum -y install sudo procps ca-certificates gnupg wget binutils net-tools
 
 EXPOSE 80 443 8080
 STOPSIGNAL SIGTERM

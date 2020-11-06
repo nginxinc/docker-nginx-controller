@@ -11,7 +11,7 @@ COPY nginx-repo.key /etc/ssl/nginx/
 # Install NGINX Plus
 RUN set -x \
  && apt-get update && apt-get upgrade -y \
- && apt-get install --no-install-recommends --no-install-suggests -y apt-transport-https ca-certificates gnupg1 procps wget curl vim python2.7\
+ && apt-get install --no-install-recommends --no-install-suggests -y apt-transport-https ca-certificates gnupg1 procps wget curl\
  && \
  NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
  found=''; \
