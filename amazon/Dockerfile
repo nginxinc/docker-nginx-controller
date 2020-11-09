@@ -59,7 +59,11 @@ RUN set -ex \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
   # TODO: remove once launching agent using `service` has been handled in the install script
   && sed -i '/^# Unconditionally stop the agent service/,$d' install.sh \
-  && sh ./install.sh -y
+  && sh ./install.sh -y \
+  # cleanup sensitive nginx-plus data
+  && rm /etc/ssl/nginx/nginx-repo.* \
+  && rm /etc/yum.repos.d/nginx-plus-amazon2.repo \
+  && gpg --batch --delete-keys "$NGINX_GPGKEY"
 
 # Forward request logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
