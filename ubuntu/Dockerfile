@@ -69,7 +69,12 @@ RUN set -ex \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
-  && sh ./install.sh -y
+  && sh ./install.sh -y \
+  # cleanup sensitive nginx-plus data
+  && rm /etc/ssl/nginx/nginx-repo.* \
+  && rm /etc/apt/sources.list.d/nginx-plus.list \
+  && rm /etc/apt/apt.conf.d/90nginx \
+  && apt-key del "$NGINX_GPGKEY"
 
 # Forward request logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
