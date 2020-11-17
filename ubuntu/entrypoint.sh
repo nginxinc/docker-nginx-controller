@@ -12,7 +12,7 @@ agent_conf_file="/etc/controller-agent/agent.conf"
 agent_log_file="/var/log/nginx-controller/agent.log"
 nginx_status_conf="/etc/nginx/conf.d/stub_status.conf"
 api_key=""
-instance_name=""
+instance_name="$(hostname -f)"
 controller_url=""
 location=""
 
