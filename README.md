@@ -74,7 +74,7 @@ The following list summarizes the existing limitations of monitoring containers 
 
 (**Note**: If you are new to Docker, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/).)
 
-**Before You Begin** Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), [download your NGINX Plus certificate and key](https://docs.nginx.com/nginx-controller/admin-guides/install/get-n-plus-cert-and-key/) (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/api/overview/).
+**Before You Begin** Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), download your NGINX Plus certificate and key (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/api/overview/).
 
 Here's how to build the Docker image with the Controller Agent inside, based on the official NGINX image:
 
