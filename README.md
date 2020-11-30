@@ -1,12 +1,12 @@
 
 - [1. Overview](#1-overview)
-  - [1.1. NGINX Controller Agent Inside Docker Container](#11-nginx-controller-agent-inside-docker-container)
-  - [1.2. Standalone Mode](#12-standalone-mode)
-  - [1.3. Current Limitations](#13-current-limitations)
-- [2. How to Build and Run a Controller enabled NGINX image](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
-  - [2.1. Building a Controller-enabled image with NGINX](#21-building-a-controller-enabled-image-with-nginx)
-  - [2.2. Running a Controller-enabled NGINX Docker Container](#22-running-a-controller-enabled-nginx-docker-container)
-- [3.0 Adding agent during container run](#30-adding-agent-during-container-run)
+  - [1.1. Current Limitations](#11-current-limitations)
+  - [1.2. NGINX Controller Agent inside Docker container](#12-nginx-controller-agent-inside-docker-container)
+  - [1.3. Standalone Mode](#13-standalone-mode)
+- [2. How to build and run an NGINX Controller-enabled image](#2-how-to-build-and-run-a-controller-enabled-image)
+  - [2.1. Building a Controller-enabled image](#21-building-a-controller-enabled-image)
+  - [2.2. Running a Controller-enabled container](#22-running-a-controller-enabled-container)
+  - [2.3. Adding agent during container run](#23-adding-agent-during-container-run)
 - [Support](#support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -30,15 +30,17 @@ Guidance around NGINX Plus is available [here](https://www.nginx.com/blog/deploy
 Dockerfiles contained in this repository are supported by and tested against NGINX Controller version 3.10 and later.
 Note: When building NGINX Plus into a container, be sure to remove repository credentials from your container.
 
-### 1.1. NGINX Controller Agent Inside Docker Container
+### 1.1. Current Limitations
 
-The Controller Agent can be deployed in a Docker environment to monitor and/or configure NGINX processes inside Docker containers.
-The Controller Agent can collect most of the metrics.
+The following list summarizes the existing limitations of monitoring containers with NGINX Controller:
 
-The "agent-inside-the-container" is currently the only mode of operation. In other words, the Controller Agent should be running in the same container as the NGINX process being managed/monitored.
-For more information, please refer to our [Controller Dockerfile repository](https://github.com/nginxinc/docker-nginx-controller.git).
+- The Controller Agent can only monitor NGINX from inside the container. It is not currently possible to run the Controller Agent in a separate container and monitor the neighboring containers running NGINX.
 
-### 1.2. Standalone Mode
+### 1.2. NGINX Controller Agent inside Docker container
+
+The Controller Agent can be deployed in a Docker environment to monitor and/or configure NGINX processes inside Docker containers. The Controller Agent can collect most of the metrics.
+
+### 1.3. Standalone Mode
 
 By default, the Controller Agent will determine the OS hostname during installation using the `hostname -f` command. The hostname value will then be assigned to the `instance_name` key in the Controller Agent configuration file (`agent.conf`) and further used to generate a UUID, which together with an instance name provide a means of uniquely identifying the NGINX instance in NGINX Controller. When the Agent is run inside a container, the default hostname is a shortened Docker Container ID on the host. You can override the automatically assigned `instance_name` on runtime by setting the `ENV_CONTROLLER_INSTANCE_NAME` environment variable to the desired value. 
 
@@ -62,15 +64,9 @@ Alternatively, environment settings can be passed at the container launch time. 
     docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
     ```
 
-### 1.3. Current Limitations
+## 2. How to build and run an NGINX Controller-enabled image
 
-The following list summarizes the existing limitations of monitoring containers with NGINX Controller:
-
-- The Controller Agent can only monitor NGINX from inside the container. It is not currently possible to run the Controller Agent in a separate container and monitor the neighboring containers running NGINX.
-
-## 2. How to Build and Run an NGINX Controller-enabled NGINX image
-
-### 2.1. Building an NGINX Controller-enabled image with NGINX
+### 2.1. Building an NGINX Controller-enabled image
 
 (**Note**: If you are new to Docker, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/).)
 
@@ -110,7 +106,7 @@ Alternately, you can set the VAR STORE_UUID=True during the image build process.
 sudo docker build --build-arg CONTROLLER_URL=https://<DNS>:8443/1.4 --build-arg API_KEY='abcdefxxxxxx' --build-arg STORE_UUID=True -t nginx-agent .
 ```
 
-### 2.2. Running an NGINX Controller-enabled NGINX Docker Container
+### 2.2. Running an NGINX Controller-enabled container
 
 To start a container from the new image, run the following command:
 
@@ -192,11 +188,11 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 7d7b47ba4c72        nginx-agent       "/entrypoint.sh"         22 minutes ago      Exited (137) 19 seconds ago                       mynginx1
 ```
 
-## 3.0 Adding the Controller Agent during container run
+### 2.3. Adding the Controller Agent during container run
 
 An alternate way to handle the Controller Agent within containers is to include the necessary Controller Agent commands in the run command for the container. This way, you don't have to build the Controller Agent into your container before running.
 
-Alternate Dockerfile
+Alternate Dockerfile:
 
 ```bash
 # nginx-plus is an example base image located in debian/examples/nginx-plus
@@ -230,10 +226,8 @@ CMD ["sh", "/controller/start"]
 ```
 
 It takes 1-2 minutes to start the container. After `docker run `, use `docker logs --follow CONTAINER` to watch the install/startup progress.
-A working alternative and `nginx-plus` example Dockerfiles can be found here:
+A working alternative and `nginx-plus` example Dockerfiles can be found in `<os>/examples` directiories.
 
-- debian/examples/
-- centos/examples/
 
 ## Support
 
