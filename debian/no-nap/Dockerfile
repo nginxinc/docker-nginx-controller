@@ -1,7 +1,4 @@
-# This dockerfile also support Ubuntu 16.04
-# To use Ubuntu 16.04 replace base image with below one:
-#FROM ubuntu:16.04
-FROM ubuntu:18.04
+FROM debian:stretch-slim
 
 LABEL maintainer="NGINX Controller Engineering"
 
@@ -25,26 +22,13 @@ ENV ENV_CONTROLLER_LOCATION=$LOCATION
 # and copy to the build context
 COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
-COPY ./entrypoint.sh /
+COPY entrypoint.sh /
 
 # Install NGINX Plus
 RUN set -ex \
-  && apt-get update \
-  && apt-get install --no-install-recommends --no-install-suggests -y \
-  curl \
-  sudo\
-  vim\
-  procps\
-  gnupg\
-  apt-utils\
-  apt-transport-https\
-  ca-certificates\
-  distro-info-data\
-  libmpdec2\
-  lsb-release \
-  binutils \
-  net-tools \
-  && apt-get upgrade -y \
+  && apt-get update && apt-get upgrade -y \
+  && apt-get install --no-install-recommends --no-install-suggests -y curl sudo procps apt-utils apt-transport-https ca-certificates gnupg1 distro-info-data libmpdec2 \
+  lsb-release python python-minimal binutils net-tools \
   && \
   NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
   found=''; \
@@ -62,7 +46,7 @@ RUN set -ex \
   && echo "Acquire::https::plus-pkgs.nginx.com::Verify-Host \"true\";" >> /etc/apt/apt.conf.d/90nginx \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslCert     \"/etc/ssl/nginx/nginx-repo.crt\";" >> /etc/apt/apt.conf.d/90nginx \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
-  && printf "deb https://plus-pkgs.nginx.com/ubuntu $(lsb_release -cs) nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
+  && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
   # NGINX Javascript module needed for APIM
   && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
   && rm -rf /var/lib/apt/lists/* \
