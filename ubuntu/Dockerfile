@@ -67,7 +67,7 @@ RUN set -ex \
   && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
-  && curl -k -sS -L ${CONTROLLER_URL}/ > install.sh \
+  && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
