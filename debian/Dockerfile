@@ -6,7 +6,7 @@ LABEL maintainer="NGINX Controller Engineering"
 ARG API_KEY 
 ENV ENV_CONTROLLER_API_KEY=$API_KEY
 
-# e.g https://<fqdn>:8443/1.4
+# e.g https://<fqdn>/install/controller-agent
 ARG CONTROLLER_URL
 ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 
@@ -51,7 +51,7 @@ RUN set -ex \
   && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
-  && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
+  && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
