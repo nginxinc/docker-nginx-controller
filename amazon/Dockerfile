@@ -55,7 +55,8 @@ RUN set -ex \
   # NGINX Javascript module needed for APIM
   && yum update && yum -y install nginx-plus nginx-plus-module-njs  \
   # Install Controller Agent
-  && curl -k -sS -L ${CONTROLLER_URL}/install/controller/ > install.sh \
+  && curl -k -sS -L ${CONTROLLER_URL}/ > install.sh \
+
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
   # TODO: remove once launching agent using `service` has been handled in the install script
   && sed -i '/^# Unconditionally stop the agent service/,$d' install.sh \

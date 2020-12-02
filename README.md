@@ -58,9 +58,9 @@ ENV HOSTNAME my-docker-instance-123
 
 Alternatively, environment settings can be passed at the container launch time. Use the `-e` option with `docker run`, for example:
 
-    ```bash
-    docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
-    ```
+```bash
+docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
+```
 
 ### 1.3. Current Limitations
 
@@ -90,7 +90,11 @@ Copy your NGINX Plus repository certificate and key to the cloned folder.
 Edit the Dockerfile with your API_KEY and ENV_CONTROLLER_URL
 
 ```bash
-docker build --build-arg CONTROLLER_URL=https://<fqdn>:8443/1.4 --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
+# If NGINX Controller version is 3.10 or older
+docker build --build-arg CONTROLLER_URL=https://<fqdn>:8443/1.4/install/controller/ --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
+
+If NGINX Controller version is 3.11 or newer
+docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
 ```
 
 After the image is built, check the list of Docker images:
