@@ -48,7 +48,7 @@ RUN set -ex \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
   && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
   # NGINX Javascript module needed for APIM
-  && apt-get update && apt-get install -y nginx-plus=22 nginx-plus-module-njs=22  \
+  && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \

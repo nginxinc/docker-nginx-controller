@@ -53,7 +53,7 @@ RUN set -ex \
   test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
   wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/nginx-plus-amazon2.repo \
   # NGINX Javascript module needed for APIM
-  && yum update && yum -y install nginx-plus-22 nginx-plus-module-njs-22  \
+  && yum update && yum -y install nginx-plus nginx-plus-module-njs  \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 
