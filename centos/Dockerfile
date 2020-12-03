@@ -6,7 +6,7 @@ LABEL maintainer="NGINX Controller Engineering"
 ARG API_KEY 
 ENV ENV_CONTROLLER_API_KEY=$API_KEY
 
-# e.g https://<fqdn>:8443/1.4
+# e.g https://<fqdn>/install/controller-agent
 ARG CONTROLLER_URL
 ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 
@@ -42,7 +42,7 @@ RUN set -ex \
   test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
   wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/nginx-plus-7.4.repo \
   # NGINX Javascript module needed for APIM
-  && yum update && yum -y install nginx-plus nginx-plus-module-njs  \
+  && yum update && yum -y install nginx-plus-22 nginx-plus-module-njs-22  \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \

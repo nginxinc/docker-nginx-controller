@@ -60,9 +60,9 @@ ENV HOSTNAME my-docker-instance-123
 
 Alternatively, environment settings can be passed at the container launch time. Use the `-e` option with `docker run`, for example:
 
-    ```bash
-    docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
-    ```
+```bash
+docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
+```
 
 ## 2. How to build and run an NGINX Controller-enabled image
 

@@ -6,7 +6,7 @@ LABEL maintainer="NGINX Controller Engineering"
 ARG API_KEY 
 ENV ENV_CONTROLLER_API_KEY=$API_KEY
 
-# e.g https://<fqdn>:8443/1.4
+# e.g https://<fqdn>/install/controller-agent
 ARG CONTROLLER_URL
 ENV ENV_CONTROLLER_URL=$CONTROLLER_URL
 
@@ -48,7 +48,7 @@ RUN set -ex \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
   && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
   # NGINX Javascript module needed for APIM
-  && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
+  && apt-get update && apt-get install -y nginx-plus=22 nginx-plus-module-njs=22  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
