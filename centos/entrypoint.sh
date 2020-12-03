@@ -64,11 +64,6 @@ if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_url}" -o -n "$
     sh -c "sed -i.old -e 's/instance_name.*$/instance_name = $instance_name/' \
 	${agent_conf_file}"
 
-    test -n "${controller_url}" && \
-    echo " ---> using controller = ${controller_url}" && \
-    sh -c "sed -i.old -e 's@api_url.*@api_url = $controller_url@' \
-	${agent_conf_file}"
-
     test -n "${location}" && \
     echo " ---> using location = ${location}" && \
     sh -c "sed -i.old -e 's/location_name.*$/location_name = $location/' \

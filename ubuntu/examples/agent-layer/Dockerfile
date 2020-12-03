@@ -21,6 +21,6 @@ WORKDIR /controller
 # Example solution for multiple service management in docker image could be found in official docker
 # documentation:
 # https://docs.docker.com/config/containers/multi-service_container
-RUN printf "curl -skSL https://\$CTRL_HOST:8443/1.4/install/controller/ | bash -s - -y\n exec nginx -g 'daemon off;'" > start
+RUN printf "curl -skSL https://\$CTRL_HOST/install/controller-agent | bash -s - -y\n exec nginx -g 'daemon off;'" > start
 
 CMD ["sh", "/controller/start"]
