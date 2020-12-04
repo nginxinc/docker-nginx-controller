@@ -19,7 +19,7 @@ The following is a set of guidelines that you can use today as we enhance the ex
 
 [NGINX Controller](https://www.nginx.com/products/nginx-controller/) is a centralized monitoring and management control-plane solution for the NGINX data plane. NGINX Controller is developed and maintained by NGINX Inc. —- the company behind the NGINX software.
 
-With NGINX Controller, it is possible to collect and aggregate metrics across NGINX instances and your applications however they run—presenting a coherent set of visualizations of the critical NGINX performance data, such as active connections or requests per second. It is also easy to quickly check for any performance degradations and traffic anomalies and to get a more in-depth insight into the NGINX configuration in general.
+With NGINX Controller, it is possible to collect and aggregate metrics across NGINX instances and your applications however they run —- presenting a coherent set of visualizations of the critical NGINX performance data, such as active connections or requests per second. It is also easy to quickly check for any performance degradations and traffic anomalies and to get a more in-depth insight into the NGINX configuration in general.
 
 A small Python-based agent software NGINX Controller Agent should be installed inside the container alongside NGINX Plus to use NGINX Controller.
 
@@ -74,7 +74,7 @@ The following list summarizes the existing limitations of monitoring containers 
 
 (**Note**: If you are new to Docker, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/).)
 
-**Before You Begin** Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), download your NGINX Plus certificate and key (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/api/overview/).
+**Before You Begin** Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), [download your NGINX Plus certificate and key](https://docs.nginx.com/nginx-controller/admin-guides/install/get-n-plus-cert-and-key/) (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/api/overview/).
 
 Here's how to build the Docker image with the Controller Agent inside, based on the official NGINX image:
 
