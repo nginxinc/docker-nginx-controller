@@ -1,4 +1,4 @@
-FROM amazonlinux:2
+FROM centos:7
 
 LABEL maintainer="NGINX Controller Engineering"
 
@@ -22,22 +22,11 @@ ENV ENV_CONTROLLER_LOCATION=$LOCATION
 # and copy to the build context
 COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
-RUN chmod +r /etc/ssl/nginx/nginx-repo.*
 
 # Install NGINX Plus
 RUN set -ex \
   && yum -y update && yum -y upgrade \
-  && yum -y groupinstall 'Development Tools' \
-  && yum -y install \
-    ca-certificates \
-    curl \
-    initscripts \
-    sudo \
-    jq \
-    net-tools \
-    redhat-lsb \
-    tar \
-    wget \
+  && yum -y install curl sudo vim procps ca-certificates gnupg wget binutils net-tools \
   && \
   NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
   found=''; \
@@ -51,7 +40,7 @@ RUN set -ex \
     gpg --keyserver "$server" --recv-keys "0x$NGINX_GPGKEY" && found=yes && break; \
   done; \
   test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
-  wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/nginx-plus-amazon2.repo \
+  wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/nginx-plus-7.4.repo \
   # NGINX Javascript module needed for APIM
   && yum update && yum -y install nginx-plus nginx-plus-module-njs  \
   # Install Controller Agent
@@ -62,14 +51,14 @@ RUN set -ex \
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
   && rm /etc/ssl/nginx/nginx-repo.* \
-  && rm /etc/yum.repos.d/nginx-plus-amazon2.repo \
+  && rm /etc/yum.repos.d/nginx-plus-7.4.repo \
   && gpg --batch --delete-keys "$NGINX_GPGKEY"
 
 # Forward request logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
   && ln -sf /dev/stderr /var/log/nginx/error.log
 
-COPY ./entrypoint.sh /
+COPY entrypoint.sh /
 
 EXPOSE 80
 

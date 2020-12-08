@@ -2,7 +2,7 @@
 #
 # This script launches nginx and the NGINX Controller Agent.
 #
-# If several instances use the same imagename, the metrics will
+# If several instances use the same image name, the metrics will
 # be aggregated into a single object in Controller. Otherwise NGINX Controller
 # will create separate objects for monitoring (an object per instance).
 
