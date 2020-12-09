@@ -1,6 +1,7 @@
 
 - [1. Overview](#1-overview)
-  - [1.3. Current Scenarios](#13-current-scenarios)
+  - [1.1. Current Scenarios](#11-current-scenarios)
+  - [1.2 Before You Begin](#12-before-you-begin)
 - [2. How to Build and Run an NGINX Controller-enabled NGINX Plus image](#2-how-to-build-and-run-an-nginx-controller-enabled-nginx-plus-image)
   - [2.1. Building an NGINX Controller-enabled image with NGINX Plus](#21-building-an-nginx-controller-enabled-image-with-nginx-plus)
   - [2.2. Running an NGINX Controller-enabled NGINX Docker Container](#22-running-an-nginx-controller-enabled-nginx-docker-container)
@@ -33,20 +34,22 @@ Guidance around NGINX Plus is available [here](https://www.nginx.com/blog/deploy
 
 Dockerfiles contained in this repository are supported by and tested against NGINX Controller version 3.10 and later.
 
-### 1.3. Current Scenarios
+### 1.1. Current Scenarios
 
 The following list summarizes known container scenarios with NGINX Controller:
 
 - The Controller Agent manages /  monitors NGINX Plus from inside the container.  Stated otherwise; It is not possible to run the Controller Agent in a separate container and monitor the neighboring containers running NGINX Plus.  It is also not possible to install the Controller Agent on the container host and monitor / manage NGINX Plus running in containers.
-- More about NGINX Controller AGent is available [here](https://docs.nginx.com/nginx-controller/admin-guides/install/install-nginx-controller-agent/)
+- More about NGINX Controller Agent is available [here](https://docs.nginx.com/nginx-controller/admin-guides/install/install-nginx-controller-agent/)
+
+### 1.2 Before You Begin
+
+ Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), [download your NGINX Plus certificate and key](https://docs.nginx.com/nginx-controller/admin-guides/install/get-n-plus-cert-and-key/) (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/admin-guides/install/install-nginx-controller-agent/).
 
 ## 2. How to Build and Run an NGINX Controller-enabled NGINX Plus image
 
 ### 2.1. Building an NGINX Controller-enabled image with NGINX Plus
 
-(**Note**: If you are new to Docker or the Dockerfile based image building process, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/). And continue through to obtaining and  building images.)
-
-**Before You Begin** Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), [download your NGINX Plus certificate and key](https://docs.nginx.com/nginx-controller/admin-guides/install/get-n-plus-cert-and-key/) (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/admin-guides/install/install-nginx-controller-agent/).
+**Note**: If you are new to Docker or the Dockerfile based image building process, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/). And continue through to obtaining and  building images.
 
 Here's how to build the container image with the Controller Agent inside, based on the official NGINX image:
 
