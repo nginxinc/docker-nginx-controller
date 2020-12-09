@@ -1,106 +1,92 @@
 
 - [1. Overview](#1-overview)
-  - [1.1. NGINX Controller Agent Inside Docker Container](#11-nginx-controller-agent-inside-docker-container)
-  - [1.2. Standalone Mode](#12-standalone-mode)
-  - [1.3. Current Limitations](#13-current-limitations)
-- [2. How to Build and Run a Controller enabled NGINX image](#2-how-to-build-and-run-a-controller-enabled-nginx-image)
-  - [2.1. Building a Controller-enabled image with NGINX](#21-building-a-controller-enabled-image-with-nginx)
-  - [2.2. Running a Controller-enabled NGINX Docker Container](#22-running-a-controller-enabled-nginx-docker-container)
-- [3.0 Adding agent during container run](#30-adding-agent-during-container-run)
-- [Support](#support)
+  - [1.1. Current Scenarios](#11-current-scenarios)
+  - [1.2 Before You Begin](#12-before-you-begin)
+- [2. How to Build and Run an NGINX Controller-enabled NGINX Plus image](#2-how-to-build-and-run-an-nginx-controller-enabled-nginx-plus-image)
+  - [2.1. Building an NGINX Controller-enabled image with NGINX Plus](#21-building-an-nginx-controller-enabled-image-with-nginx-plus)
+  - [2.2. Running an NGINX Controller-enabled NGINX Docker Container](#22-running-an-nginx-controller-enabled-nginx-docker-container)
+- [3.0 Adding a Controller Agent layer to an existing container or image](#30-adding-a-controller-agent-layer-to-an-existing-container-or-image)
+  - [3.1 at run time](#31-at-run-time)
+  - [3.2 as an image layer](#32-as-an-image-layer)
+- [4.0 Build time and Run time options](#40-build-time-and-run-time-options)
+  - [4.1 default naming behavior](#41-default-naming-behavior)
+  - [4.2 Persisting an instance identity through stops and starts](#42-persisting-an-instance-identity-through-stops-and-starts)
+  - [4.3 Applying a unique location to a container at run time](#43-applying-a-unique-location-to-a-container-at-run-time)
+- [5.0 Support](#50-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-We are actively working on improving support for Docker with NGINX Controller.
+We are actively working on improving support for containers with NGINX Controller.
 
 The following is a set of guidelines that you can use today as we enhance the experience.
 
 ## 1. Overview
 
-[NGINX Controller](https://www.nginx.com/products/nginx-controller/) is a centralized monitoring and management control-plane solution for the NGINX data plane. NGINX Controller is developed and maintained by NGINX Inc. —- the company behind the NGINX software.
+[NGINX Controller](https://www.nginx.com/products/nginx-controller/) is a centralized monitoring and management control-plane solution for the NGINX Plus data plane. NGINX Controller is developed and maintained by NGINX - the people behind NGINX software.
 
-With NGINX Controller, it is possible to collect and aggregate metrics across NGINX instances and your applications however they run —- presenting a coherent set of visualizations of the critical NGINX performance data, such as active connections or requests per second. It is also easy to quickly check for any performance degradations and traffic anomalies and to get a more in-depth insight into the NGINX configuration in general.
+With NGINX Controller, it is possible to collect and aggregate metrics across NGINX Plus instances, your applications, environments, and locations however they run - presenting a coherent set of visualizations of the critical NGINX Plus performance data, such as active connections or requests per second. It is also easy to quickly check for any performance degradations and traffic anomalies and to get a more in-depth insight into the NGINX configuration in general.
 
-A small Python-based agent software NGINX Controller Agent should be installed inside the container alongside NGINX Plus to use NGINX Controller.
+A small agent (NGINX Controller Agent) is necessary inside the container alongside NGINX Plus to use NGINX Controller to monitor and / or manage your fleet of NGINX Plus instances.
 
 The official documentation for NGINX Controller is available [here](https://docs.nginx.com/nginx-controller/).
 
 Guidance around NGINX Plus is available [here](https://www.nginx.com/blog/deploying-nginx-nginx-plus-docker/).
 
 Dockerfiles contained in this repository are supported by and tested against NGINX Controller version 3.10 and later.
-Note: When building NGINX Plus into a container, be sure to remove repository credentials from your container.
 
-### 1.1. NGINX Controller Agent Inside Docker Container
+### 1.1. Current Scenarios
 
-The Controller Agent can be deployed in a Docker environment to monitor and/or configure NGINX processes inside Docker containers.
-The Controller Agent can collect most of the metrics.
+The following list summarizes known container scenarios with NGINX Controller:
 
-The "agent-inside-the-container" is currently the only mode of operation. In other words, the Controller Agent should be running in the same container as the NGINX process being managed/monitored.
-For more information, please refer to our [Controller Dockerfile repository](https://github.com/nginxinc/docker-nginx-controller.git).
+- The Controller Agent manages /  monitors NGINX Plus from inside the container.  Stated otherwise; It is not possible to run the Controller Agent in a separate container and monitor the neighboring containers running NGINX Plus.  It is also not possible to install the Controller Agent on the container host and monitor / manage NGINX Plus running in containers.
+- More about NGINX Controller Agent is available [here](https://docs.nginx.com/nginx-controller/admin-guides/install/install-nginx-controller-agent/)
 
-### 1.2. Standalone Mode
+### 1.2 Before You Begin
 
-By default, the Controller Agent will determine the OS hostname during installation using the `hostname -f` command. The hostname value will then be assigned to the `instance_name` key in the Controller Agent configuration file (`agent.conf`) and further used to generate a UUID, which together with an instance name provide a means of uniquely identifying the NGINX instance in NGINX Controller. When the Agent is run inside a container, the default hostname is a shortened Docker Container ID on the host. You can override the automatically assigned `instance_name` on runtime by setting the `ENV_CONTROLLER_INSTANCE_NAME` environment variable to the desired value. 
+ Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), [download your NGINX Plus certificate and key](https://docs.nginx.com/nginx-controller/admin-guides/install/get-n-plus-cert-and-key/) (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/admin-guides/install/install-nginx-controller-agent/).
 
-Using the optional build-time setting of `STORE_UUID=True` will also ensure that the dynamically generated UUID is persisted in the Controller Agent configuration. This, together with the `instance_name`, allows the container instance to be stopped and started or persist if the container host is rebooted.
+## 2. How to Build and Run an NGINX Controller-enabled NGINX Plus image
 
-Each new container started from an NGINX Controller-enabled Docker image is reported as a standalone system in the NGINX Controller console. This is the recommended configuration, as NGIN Controller will aggregate metrics across your instances based on the application, application component, location, environment, and so forth.
+### 2.1. Building an NGINX Controller-enabled image with NGINX Plus
 
-To learn more about the NGINX Agent configuration options, refer to the NGINX Controller documentation by selecting the help link in NGINX Controller.
+**Note**: If you are new to Docker or the Dockerfile based image building process, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/). And continue through to obtaining and  building images.
 
-```bash
-# If HOSTNAME is set, the startup wrapper script will use it to
-# generate the 'hostname' to put in the /etc/controller-agent/agent.conf
+Here's how to build the container image with the Controller Agent inside, based on the official NGINX image:
 
-ENV HOSTNAME my-docker-instance-123
-
-```
-
-Alternatively, environment settings can be passed at the container launch time. Use the `-e` option with `docker run`, for example:
-
-```bash
-docker run --name mynginx1 -e ENV_CONTROLLER_API_KEY=1234567890 -e ENV_CONTROLLER_INSTANCE_NAME=my-instance-123 -d nginx-agent
-```
-
-### 1.3. Current Limitations
-
-The following list summarizes the existing limitations of monitoring containers with NGINX Controller:
-
-- The Controller Agent can only monitor NGINX from inside the container. It is not currently possible to run the Controller Agent in a separate container and monitor the neighboring containers running NGINX.
-
-## 2. How to Build and Run an NGINX Controller-enabled NGINX image
-
-### 2.1. Building an NGINX Controller-enabled image with NGINX
-
-(**Note**: If you are new to Docker, refer to the documentation on [how to install Docker Engine on various operating systems](https://docs.docker.com/engine/installation/).)
-
-**Before You Begin** Before proceeding, you must [install NGINX Controller](https://docs.nginx.com/nginx-controller/admin-guides/install/), [download your NGINX Plus certificate and key](https://docs.nginx.com/nginx-controller/admin-guides/install/get-n-plus-cert-and-key/) (that is, `nginx-repo.crt` and `nginx-repo.key`), and [obtain the API key for your NGINX Controller instance](https://docs.nginx.com/nginx-controller/api/overview/).
-
-Here's how to build the Docker image with the Controller Agent inside, based on the official NGINX image:
+Clone this repository
 
 ```bash
 git clone https://github.com/nginxinc/docker-nginx-controller.git
 ```
 
 ```bash
-cd docker-nginx-controller/<os>
+cd docker-nginx-controller/<distribution>
 ```
 
-Copy your NGINX Plus repository certificate and key to the cloned folder.  
-Edit the Dockerfile with your API_KEY and ENV_CONTROLLER_URL
+Copy your NGINX Plus repository certificate and key to the folder of the Dockerfile you will be using for your Linux distribution.
+
+Edit the Dockerfile with your API_KEY and CONTROLLER_URL
+
+(**Note**: RE: CONTROLLER_URL format
 
 ```bash
 # If NGINX Controller version is 3.10 or older
-docker build --build-arg CONTROLLER_URL=https://<fqdn>:8443/1.4/install/controller/ --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
+CONTROLLER_URL=https://<fqdn>:8443/1.4/install/controller/
 
 # If NGINX Controller version is 3.11 or newer
-docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
+CONTROLLER_URL=https://<fqdn>/install/controller-agent
+```
+
+Examples are shown using the latest version)
+
+```bash
+sudo docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
 ```
 
 After the image is built, check the list of Docker images:
 
 ```bash
-docker images
+sudo docker images
 ```
 
 ```bash
@@ -108,27 +94,13 @@ REPOSITORY          TAG                 IMAGE ID            CREATED             
 nginx-agent       latest              d039b39d2987        3 minutes ago       241.6 MB
 ```
 
-Alternately, you can set the VAR STORE_UUID=True during the image build process. This has the effect of persisting the instance displayName in NGINX Controller through container stop and start actions. The displayName will default to the hostname of the machine.
-
-```bash
-# If NGINX Controller version is 3.10 or older
-sudo docker build --build-arg CONTROLLER_URL=https://<fqdn>:8443/1.4/install/controller/ --build-arg API_KEY='abcdefxxxxxx' --build-arg STORE_UUID=True -t nginx-agent .
-
-# If NGINX Controller version is 3.11 or newer
-sudo docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg STORE_UUID=True -t nginx-agent .
-```
-
 ### 2.2. Running an NGINX Controller-enabled NGINX Docker Container
 
 To start a container from the new image, run the following command:
 
 ```bash
-docker run --name mynginx1 -e ENV_CONTROLLER_INSTANCE_NAME=mynginx1 -d nginx-agent
+docker run --name mynginx1 -d nginx-agent
 ```
-
-Providing the `ENV_CONTROLLER_INSTANCE_NAME` variable for the container sets the container's name that is displayed in NGINX Controller for the displayName of the instance. This also sets the instance object name, which is used in configuration references.
-
-If you do not override the default instance name, the containerID is registered as the instance name and displayName within NGINX Controller.
 
 After the container has started, you can check its status with `docker ps`:
 
@@ -200,18 +172,18 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 7d7b47ba4c72        nginx-agent       "/entrypoint.sh"         22 minutes ago      Exited (137) 19 seconds ago                       mynginx1
 ```
 
-## 3.0 Adding the Controller Agent during container run
+## 3.0 Adding a Controller Agent layer to an existing container or image
 
-An alternate way to handle the Controller Agent within containers is to include the necessary Controller Agent commands in the run command for the container. This way, you don't have to build the Controller Agent into your container before running.
+An alternate way to handle the Controller Agent within containers is to include the necessary Controller Agent commands in the run command for an existing image. This way, you don't have to build the Controller Agent into your container before running and you might find handy for a Proof of Concept.
 
-Alternate Dockerfile
+### 3.1 at run time
 
 ```bash
 # nginx-plus is an example base image located in debian/examples/nginx-plus
 FROM nginx-plus
 
-# Start container with environment variables for CTRL_HOST and API_KEY
-# docker run --name apigw --hostname apigw -e CTRL_HOST=10.20.30.40 -e API_KEY=deadbeef -d -P nginx-ctrl
+# Start a container with environment variables for CONTROLLER_URL and API_KEY
+# docker run --name api-gw --hostname api-gw -e CONTROLLER_URL=https://10.20.30.40/install/controller-agent -e API_KEY=deadbeef -d -P nginx-ctrl
 
 # Install everything we will need to install the Controller Agent so that the container can start quickly
 RUN apt-get update &&\
@@ -226,25 +198,59 @@ STOPSIGNAL SIGTERM
 
 WORKDIR /controller
 
-# This script will download, install, and start the Controller Agent using the `service controller-agent start` command.
-# The Controller Agent service should be stopped gracefully using `service controller-agent stop` command, which
-# is not done in this example as a solution strictly depends on the form of cmd/entry point of the base image.
-# Example solution for multiple service management in docker image could be found in official docker
-# documentation:
-# https://docs.docker.com/config/containers/multi-service_container
-RUN printf "curl -skSL https://\$CTRL_HOST:8443/1.4/install/controller/ | bash -s - -y\n exec nginx -g 'daemon off;'" > start
+RUN printf "curl -skSL \$CONTROLLER_URL | bash -s - -y\n exec nginx -g 'daemon off;'" > start
 
 CMD ["sh", "/controller/start"]
 ```
 
-It takes 1-2 minutes to start the container. After `docker run `, use `docker logs --follow CONTAINER` to watch the install/startup progress.
-A working alternative and `nginx-plus` example Dockerfiles can be found here:
+It takes 1-2 minutes to start the container. After `docker run `, use `docker logs --follow CONTAINER` to watch the installation and startup progress.
 
-- debian/examples/
-- centos/examples/
+### 3.2 as an image layer
 
-## Support
+For your convenience Dockerfiles that define this as a layer are provided.  They are built following the pattern for multiple service management in a docker image can be found under each distribution at:
 
-This project is not covered by the NGINX Plus support contract.
+```bash
+cd docker-nginx-controller/<distribution>/examples/agent-layer
+```
 
-This project is currently considered *experimental* and has been validated with Controller Agent 2.8+, and was adapted from the Amplify guidance.
+More information about this pattern is available here: https://docs.docker.com/config/containers/multi-service_container
+
+The build process is the same as above, referencing your custom image as the source.
+
+## 4.0 Build time and Run time options
+
+### 4.1 default naming behavior
+
+By default, the Controller Agent will determine the OS hostname during installation using the `hostname -f` command. The hostname value will then be assigned to the `instance_name` key in the Controller Agent configuration file (`agent.conf`) and further used to generate a UUID, which together with an instance name provide a means of uniquely identifying the NGINX instance in NGINX Controller. When the Agent is run inside a container, the default hostname is a shortened Docker Container ID on the host. You can override the automatically assigned `instance_name` on runtime by setting the `ENV_CONTROLLER_INSTANCE_NAME` environment variable to the desired value.
+
+Providing the `ENV_CONTROLLER_INSTANCE_NAME` variable for the container sets the container's name that is displayed in NGINX Controller for the displayName of the instance. This also sets the instance object name, which is used in configuration references.
+
+If you do not override the default instance name, the containerID is registered as the instance name and displayName within NGINX Controller.
+
+### 4.2 Persisting an instance identity through stops and starts
+
+Using the optional build-time setting of `STORE_UUID=True` will also ensure that the dynamically generated UUID is persisted in the Controller Agent configuration. This, together with the `instance_name`, allows the container instance to be stopped and started or persist if the container host is rebooted.
+
+Each new container started from an NGINX Controller-enabled Docker image is reported as a unique system in the NGINX Controller console. This is the recommended configuration.  NGINX Controller will aggregate metrics across your instances based on the application, application component, location, environment, and so forth.
+
+VAR STORE_UUID=True can be set during the image build process. And apply to all containers derived from the image.
+
+```bash
+sudo docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg STORE_UUID=True -t nginx-agent .
+```
+
+### 4.3 Applying a unique location to a container at run time
+
+By default new instances are placed in the NGINX Controller location named 'unspecified'.  There are situations where instances should be associated with specific locations.  This can be defined as build time and apply to all containers derived from the image or during run time and apply to a subset of containers.
+
+Using the optional run-time setting of ENV_CONTROLLER_LOCATION when your container instance reports to NGINX Controller the new instance will automatically register itself with a specific location already present in NGINX Controller.
+
+```bash
+docker run --name mynginx-east-1 -e ENV_CONTROLLER_LOCATION=east -d nginx-agent
+```
+
+The location will not be automatically created in NGINX Controller and needs to be defined separately.
+
+## 5.0 Support
+
+This project is supported and has been validated with Controller Agent 3.10 and later.
