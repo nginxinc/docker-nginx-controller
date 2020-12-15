@@ -251,6 +251,21 @@ docker run --name mynginx-east-1 -e ENV_CONTROLLER_LOCATION=east -d nginx-agent
 
 The location will not be automatically created in NGINX Controller and needs to be defined separately.
 
+### 4.4 Overriding Agent NGINX Controller configuration
+
+Container could be build using configuration of one instance of NGINX Controller and run using another instance of NGINX Controller.
+`ENV_CONTROLLER_API_KEY` and `ENV_CONTROLLER_API_URL` variable could be used to override during run-time NGINX Controller configuration.
+
+```bash
+docker run --name mynginx1 -d -e ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4 -e ENV_CONTROLLER_API_KEY=deadbeef nginx-agent
+```
+
+(**Note**: RE: ENV_CONTROLLER_API_URL format
+
+```bash
+ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4
+```
+
 ## 5.0 Support
 
 This project is supported and has been validated with Controller Agent 3.10 and later.
