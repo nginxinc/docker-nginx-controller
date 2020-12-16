@@ -7,7 +7,8 @@
   - [1.2 Before You Begin](#12-before-you-begin)
 - [2. How to Build and Run an NGINX Controller-Enabled NGINX Plus Image](#2-how-to-build-and-run-an-nginx-controller-enabled-nginx-plus-image)
   - [2.1. Building an NGINX Controller-Enabled Image with NGINX Plus](#21-building-an-nginx-controller-enabled-image-with-nginx-plus)
-  - [2.2. Running an NGINX Controller-Enabled NGINX Docker Container](#22-running-an-nginx-controller-enabled-nginx-docker-container)
+  - [2.2. Building a NAP-Enabled NGINX Docker Container](#22-building-a-nap-enabled-nginx-docker-container)
+  - [2.3. Running an NGINX Controller-Enabled NGINX Docker Container](#23-running-an-nginx-controller-enabled-nginx-docker-container)
 - [3.0 Adding a Controller Agent Layer to an Existing Container or Image](#30-adding-a-controller-agent-layer-to-an-existing-container-or-image)
   - [3.1 At Run Time](#31-at-run-time)
   - [3.2 As an Image Layer](#32-as-an-image-layer)
@@ -15,25 +16,6 @@
   - [4.1 Default Naming Behavior](#41-default-naming-behavior)
   - [4.2 Persisting an Instance Identity through Stops and Starts](#42-persisting-an-instance-identity-through-stops-and-starts)
   - [4.3 Applying a Unique Location to a Container at Run Time](#43-applying-a-unique-location-to-a-container-at-run-time)
-- [5.0 Support](#50-support)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
-- [1. Overview](#1-overview)
-  - [1.1. Current Scenarios](#11-current-scenarios)
-  - [1.2 Before You Begin](#12-before-you-begin)
-- [2. How to Build and Run an NGINX Controller-enabled NGINX Plus image](#2-how-to-build-and-run-an-nginx-controller-enabled-nginx-plus-image)
-  - [2.1. Building an NGINX Controller-enabled image with NGINX Plus](#21-building-an-nginx-controller-enabled-image-with-nginx-plus)
-  - [2.2. Building a NAP-enabled NGINX Docker Container](#22-building-a-nap-enabled-nginx-docker-container)
-  - [2.3. Running an NGINX Controller-enabled NGINX Docker Container](#23-running-an-nginx-controller-enabled-nginx-docker-container)
-- [3.0 Adding a Controller Agent layer to an existing container or image](#30-adding-a-controller-agent-layer-to-an-existing-container-or-image)
-  - [3.1 at run time](#31-at-run-time)
-  - [3.2 as an image layer](#32-as-an-image-layer)
-- [4.0 Build time and Run time options](#40-build-time-and-run-time-options)
-  - [4.1 default naming behavior](#41-default-naming-behavior)
-  - [4.2 Persisting an instance identity through stops and starts](#42-persisting-an-instance-identity-through-stops-and-starts)
-  - [4.3 Applying a unique location to a container at run time](#43-applying-a-unique-location-to-a-container-at-run-time)
 - [5.0 Support](#50-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
