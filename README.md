@@ -25,7 +25,8 @@
   - [1.2 Before You Begin](#12-before-you-begin)
 - [2. How to Build and Run an NGINX Controller-enabled NGINX Plus image](#2-how-to-build-and-run-an-nginx-controller-enabled-nginx-plus-image)
   - [2.1. Building an NGINX Controller-enabled image with NGINX Plus](#21-building-an-nginx-controller-enabled-image-with-nginx-plus)
-  - [2.2. Running an NGINX Controller-enabled NGINX Docker Container](#22-running-an-nginx-controller-enabled-nginx-docker-container)
+  - [2.2. Building a NAP-enabled NGINX Docker Container](#22-building-a-nap-enabled-nginx-docker-container)
+  - [2.3. Running an NGINX Controller-enabled NGINX Docker Container](#23-running-an-nginx-controller-enabled-nginx-docker-container)
 - [3.0 Adding a Controller Agent layer to an existing container or image](#30-adding-a-controller-agent-layer-to-an-existing-container-or-image)
   - [3.1 at run time](#31-at-run-time)
   - [3.2 as an image layer](#32-as-an-image-layer)
@@ -48,6 +49,9 @@ The following is a set of guidelines that you can use today as we enhance the ex
 With NGINX Controller, it is possible to collect and aggregate metrics across NGINX Plus instances, your applications, environments, and locations however they run -- presenting a coherent set of visualizations of the critical NGINX Plus performance data, such as active connections or requests per second. It is also easy to quickly check for any performance degradations and traffic anomalies and to get a more in-depth insight into the NGINX configuration in general.
 
 A small agent (NGINX Controller Agent) is necessary inside the container alongside NGINX Plus to use NGINX Controller to monitor and/or manage your fleet of NGINX Plus instances.
+
+For security protection of your web application, a web application firewall NGINX App Protect could be installed alongside NGINX Plus.
+The official documentation for NGINX App Protect is available [here](https://docs.nginx.com/nginx-app-protect/).  
 
 The official documentation for NGINX Controller is available [here](https://docs.nginx.com/nginx-controller/).
 
@@ -82,9 +86,8 @@ Here's how to build the container image with the Controller Agent inside, based 
     ```bash
     git clone https://github.com/nginxinc/docker-nginx-controller.git
     ```
-
     ```bash
-    cd docker-nginx-controller/<distribution>
+    cd docker-nginx-controller/<distribution>/no-nap
     ```
 
 2. Copy your NGINX Plus repository certificate and key to the folder of the Dockerfile you will be using for your Linux distribution.
@@ -116,7 +119,17 @@ Here's how to build the container image with the Controller Agent inside, based 
     nginx-agent       latest              d039b39d2987        3 minutes ago       241.6 MB
     ```
 
-### 2.2. Running an NGINX Controller-Enabled NGINX Docker Container
+### 2.2. Building a NAP-Enabled NGINX Docker Container
+
+If you want your Docker image to include a web application firewall, in addition to the Controller Agent, 
+use a Dockerfile with NGINX App Protect included. The file is located  at 
+`docker-nginx-controller/<distribution>/nap`:
+
+```bash
+cd docker-nginx-controller/<distribution>/nap
+```
+
+### 2.3. Running an NGINX Controller-Enabled NGINX Docker Container
 
 Take the following steps to run an NGINX Controller-enabled NGINX Docker Container:
 
@@ -159,6 +172,8 @@ Take the following steps to run an NGINX Controller-enabled NGINX Docker Contain
     ```bash
     docker exec 7d7b47ba4c72 ps axu
     ```
+    
+    If you see the **controller-agent** process, the setup went smoothly, and you should see the new container in the NGINX Controller interface after approximately one minute.
 
     The output looks similar to the following example:
 
@@ -170,7 +185,12 @@ Take the following steps to run an NGINX Controller-enabled NGINX Docker Contain
     nginx       65  0.6  9.1 111584 45884 ?        S    19:33   0:06 controller-agent
     ```
 
-    If you see the **controller-agent** process, the setup went smoothly, and you should see the new container in the NGINX Controller interface after approximately one minute.
+    If your container includes NAP (NGINX App Protect) then you should also see NAP-specific processes:
+
+    ```bash
+    nginx       10  0.0  2.5 129684 52320 ?        S    11:14   0:05 /usr/bin/perl /opt/app_protect/bin/bd_agent
+    nginx       14  2.4 12.7 1057612 260260 ?      Sl   11:14   5:54 /usr/share/ts/bin/bd-socket-plugin tmm_count 4 proc_cpuinfo_cpu_m
+    ```
 
 5. To view the Controller Agent log, run the following command:
 
