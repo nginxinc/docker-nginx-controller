@@ -2,9 +2,6 @@
 #
 # This script launches nginx and the NGINX Controller Agent.
 #
-# If several instances use the same imagename, the metrics will
-# be aggregated into a single object in Controller. Otherwise NGINX Controller
-# will create separate objects for monitoring (an object per instance).
 
 # Variables
 agent_conf_file="/etc/controller-agent/agent.conf"
@@ -12,7 +9,7 @@ agent_log_file="/var/log/nginx-controller/agent.log"
 nginx_status_conf="/etc/nginx/conf.d/stub_status.conf"
 api_key=""
 instance_name="$(hostname -f)"
-controller_url=""
+controller_api_url=""
 location=""
 
 handle_term()
@@ -39,13 +36,13 @@ test -n "${ENV_CONTROLLER_API_KEY}" && \
 test -n "${ENV_CONTROLLER_INSTANCE_NAME}" && \
     instance_name=${ENV_CONTROLLER_INSTANCE_NAME}
 
-test -n "${ENV_CONTROLLER_URL}" && \
-    controller_url=${ENV_CONTROLLER_URL}
+test -n "${ENV_CONTROLLER_API_URL}" && \
+    controller_api_url=${ENV_CONTROLLER_API_URL}
 
 test -n "${ENV_CONTROLLER_LOCATION}" && \
     location=${ENV_CONTROLLER_LOCATION}
 
-if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_url}" -o -n "${location}" ]; then
+if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_api_url}" -o -n "${location}" ]; then
     echo "updating ${agent_conf_file} ..."
 
     if [ ! -f "${agent_conf_file}" ]; then
@@ -57,6 +54,11 @@ if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_url}" -o -n "$
     test -n "${api_key}" && \
     echo " ---> using api_key = ${api_key}" && \
     sh -c "sed -i.old -e 's/api_key.*$/api_key = $api_key/' \
+	${agent_conf_file}"
+
+    test -n "${controller_api_url}" && \
+    echo " ---> using controller api url = ${controller_api_url}" && \
+    sh -c "sed -i.old -e 's@^api_url.*@api_url = $controller_api_url@' \
 	${agent_conf_file}"
 
     test -n "${instance_name}" && \
