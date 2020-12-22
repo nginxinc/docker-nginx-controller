@@ -18,6 +18,9 @@ ENV ENV_CONTROLLER_STORE_UUID=$STORE_UUID
 ARG LOCATION
 ENV ENV_CONTROLLER_LOCATION=$LOCATION
 
+# NGXIN Plus release e.g 23
+ARG NGINX_PLUS_VERSION=23
+
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
 COPY nginx-repo.* /etc/ssl/nginx/
@@ -42,7 +45,7 @@ RUN set -ex \
   test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
   wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/nginx-plus-7.4.repo \
   # NGINX Javascript module needed for APIM
-  && yum update && yum -y install nginx-plus nginx-plus-module-njs  \
+  && yum update && yum -y install nginx-plus-${NGINX_PLUS_VERSION}* nginx-plus-module-njs-${NGINX_PLUS_VERSION}*  \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
