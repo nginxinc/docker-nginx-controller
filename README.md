@@ -302,6 +302,15 @@ docker run --name mynginx1 -d -e ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4 
 ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4
 ```
 
+### 4.5 Overriding NGINX Plus version
+
+Version of NGINX Plus installed inside docker image could changed using `NGINX_PLUS_VERSION` build time argument.
+`NGINX_PLUS_VERSION` should be set to release number of NGINX Plus e.g. `23`
+
+```bash
+docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg NGINX_PLUS_VERSION=22 -t nginx-agent .
+```
+
 ## 5.0 Support
 
 This project is supported and has been validated with Controller Agent v3.10 and later.

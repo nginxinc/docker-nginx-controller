@@ -18,6 +18,9 @@ ENV ENV_CONTROLLER_STORE_UUID=$STORE_UUID
 ARG LOCATION
 ENV ENV_CONTROLLER_LOCATION=$LOCATION
 
+# NGXIN Plus release e.g 23
+ARG NGINX_PLUS_VERSION=23
+
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
 COPY nginx-repo.* /etc/ssl/nginx/
@@ -48,7 +51,7 @@ RUN set -ex \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
   && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
   # NGINX Javascript module needed for APIM
-  && apt-get update && apt-get install -y nginx-plus nginx-plus-module-njs  \
+  && apt-get update && apt-get install -y nginx-plus=${NGINX_PLUS_VERSION}* nginx-plus-module-njs=${NGINX_PLUS_VERSION}*  \
   && rm -rf /var/lib/apt/lists/* \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
