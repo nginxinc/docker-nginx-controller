@@ -48,8 +48,17 @@ RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
-RUN yum -y install app-protect \
-  && sed -i "6 a load_module modules/ngx_http_app_protect_module.so;" /etc/nginx/nginx.conf
+ARG NGINX_PLUS_VERSION=23
+RUN if [ "$NGINX_PLUS_VERSION" -lt 22 ] ; then \
+	echo "NGINX Plus version ${NGINX_PLUS_VERSION} is not supported by NAP" \
+	&& exit 1 ; \
+	elif [ "$NGINX_PLUS_VERSION" -eq 22 ] ; \
+	then \
+	yum -y install app-protect-22+3.243.1 ; \
+	else \
+	yum -y install app-protect ; \
+	fi
+RUN sed -i "6 a load_module modules/ngx_http_app_protect_module.so;" /etc/nginx/nginx.conf
 
 
 FROM nap-installer as cleaner

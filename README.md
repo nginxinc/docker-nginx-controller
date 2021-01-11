@@ -311,6 +311,7 @@ Version of NGINX Plus installed inside docker image could changed using `NGINX_P
 docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg NGINX_PLUS_VERSION=22 -t nginx-agent .
 ```
 
+For NAP-Enabled NGINX Docker Containers, information about App Security requirements can be found [here](https://docs.nginx.com/nginx-controller/admin-guides/install/try-nginx-controller-app-sec/)
 ## 5.0 Support
 
 This project is supported and has been validated with Controller Agent v3.10 and later.

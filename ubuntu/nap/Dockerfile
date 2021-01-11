@@ -67,8 +67,14 @@ RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
-RUN apt-get install -y app-protect \
-  && sed -i "6 a load_module modules/ngx_http_app_protect_module.so;" /etc/nginx/nginx.conf
+ARG NGINX_PLUS_VERSION=23
+RUN if [ "$NGINX_PLUS_VERSION" -lt 23 ] ; then \
+	echo "NGINX Plus version ${NGINX_PLUS_VERSION} is not supported by NAP" \
+	&& exit 1 ; \
+	else \
+	apt-get install -y app-protect ; \
+	fi
+RUN sed -i "6 a load_module modules/ngx_http_app_protect_module.so;" /etc/nginx/nginx.conf
 
 
 FROM nap-installer as cleaner
