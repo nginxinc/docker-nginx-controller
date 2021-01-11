@@ -16,6 +16,8 @@
   - [4.1 Default Naming Behavior](#41-default-naming-behavior)
   - [4.2 Persisting an Instance Identity through Stops and Starts](#42-persisting-an-instance-identity-through-stops-and-starts)
   - [4.3 Applying a Unique Location to a Container at Run Time](#43-applying-a-unique-location-to-a-container-at-run-time)
+  - [4.4 Overriding Agent NGINX Controller configuration](#44-overriding-agent-nginx-controller-configuration)
+  - [4.5 Overriding NGINX Plus version](#45-overriding-nginx-plus-version)
 - [5.0 Support](#50-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
