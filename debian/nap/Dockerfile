@@ -93,8 +93,8 @@ ENV ENV_CONTROLLER_STORE_UUID=$STORE_UUID
 ARG LOCATION
 ENV ENV_CONTROLLER_LOCATION=$LOCATION
 # Forward request logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
-  && ln -sf /dev/stderr /var/log/nginx/error.log
+RUN ln -sf /proc/1/fd/1 /var/log/nginx-controller/agent.log \
+  && ln -sf /proc/1/fd/2 /var/log/nginx/error.log
 
 COPY custom_log_format.json /etc/nginx/
 
