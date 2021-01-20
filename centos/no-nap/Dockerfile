@@ -58,8 +58,8 @@ RUN set -ex \
   && gpg --batch --delete-keys "$NGINX_GPGKEY"
 
 # Forward request logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/nginx-controller/agent.log \
-  && ln -sf /dev/stderr /var/log/nginx/error.log
+RUN ln -sf /proc/1/fd/1 /var/log/nginx-controller/agent.log \
+  && ln -sf /proc/1/fd/2 /var/log/nginx/error.log
 
 COPY entrypoint.sh /
 
