@@ -97,12 +97,13 @@ fi
 
 wait_term()
 {
-    wait ${nginx_pid}
+    wait ${agent_pid}
     trap - TERM
-    echo "wait for nginx to stop..."
+    kill -QUIT "${nginx_pid}" 2>/dev/null
+    echo "waiting for nginx to stop..."
     wait ${nginx_pid}
 }
 
 wait_term
 
-echo "nginx master process has stopped, exiting."
+echo "controller-agent process has stopped, exiting."
