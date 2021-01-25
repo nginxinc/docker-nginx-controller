@@ -16,7 +16,7 @@ handle_term()
 {
     echo "received TERM signal"
     echo "stopping controller-agent ..."
-    kill -TERM "${agent_pid}" 2>/dev/null
+    service controller-agent stop
     echo "stopping nginx ..."
     kill -TERM "${nginx_pid}" 2>/dev/null
 }
@@ -86,9 +86,7 @@ if ! grep '^api_key.*=[ ]*[[:alnum:]].*' ${agent_conf_file} > /dev/null 2>&1; th
 fi
 
 echo "starting controller-agent ..."
-/usr/bin/nginx-controller-agent > /dev/null 2>&1 < /dev/null &
-
-agent_pid=$!
+service controller-agent start > /dev/null 2>&1 < /dev/null
 
 if [ $? != 0 ]; then
     echo "couldn't start the agent, please check ${agent_log_file}"
@@ -97,13 +95,12 @@ fi
 
 wait_term()
 {
-    wait ${agent_pid}
+    wait ${nginx_pid}
     trap - TERM
-    kill -QUIT "${nginx_pid}" 2>/dev/null
-    echo "waiting for nginx to stop..."
+    echo "wait for nginx to stop..."
     wait ${nginx_pid}
 }
 
 wait_term
 
-echo "controller-agent process has stopped, exiting."
+echo "nginx master process has stopped, exiting."
