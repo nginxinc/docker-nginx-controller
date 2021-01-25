@@ -83,16 +83,6 @@ RUN set -ex \
 RUN ln -sf /proc/1/fd/1 /var/log/nginx-controller/agent.log \
   && ln -sf /proc/1/fd/2 /var/log/nginx/error.log
 
-# Update ownership for the necessary filesystem objects for running under "nginx" user
-RUN chown -R nginx:nginx /var/run/ \
-  && chown -R nginx:nginx /var/log/nginx/ \
-  && chown -R nginx:nginx /var/log/nginx-controller/ \
-  && chown -R nginx:nginx /var/cache/nginx/ \
-  && chown -R nginx:nginx /etc/controller-agent/ \
-  && chown -R nginx:nginx /etc/nginx/
-
-USER nginx
-
 EXPOSE 80
 
 STOPSIGNAL SIGTERM
