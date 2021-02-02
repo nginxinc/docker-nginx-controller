@@ -82,7 +82,7 @@ if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_api_url}" -o -
 
     if ! grep -Fq "security = " ${agent_conf_file}; then
     sh -c "sed -i.old -e 's/\[extensions\]/&\nsecurity = True/g' \
-    ${agent_conf_file}"
+        ${agent_conf_file}"
     fi
 
     test -f "${agent_conf_file}" && \
