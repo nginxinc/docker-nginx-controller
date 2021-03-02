@@ -29,6 +29,16 @@ nginx -g "daemon off;" &
 
 nginx_pid=$!
 
+wait_workers()
+{
+    while ! pgrep -f 'nginx: worker process' >/dev/null 2>&1; do
+        echo "waiting for nginx workers ..."
+        sleep 2
+    done
+}
+
+wait_workers
+
 test -n "${ENV_CONTROLLER_API_KEY}" && \
     api_key=${ENV_CONTROLLER_API_KEY}
 
