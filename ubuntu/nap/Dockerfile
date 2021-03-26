@@ -102,6 +102,11 @@ ENV ENV_CONTROLLER_STORE_UUID=$STORE_UUID
 # e.g Instance location already defined in Controller
 ARG LOCATION
 ENV ENV_CONTROLLER_LOCATION=$LOCATION
+
+# e.g Instance group already defined in Controller
+ARG INSTANCE_GROUP
+ENV ENV_CONTROLLER_INSTANCE_GROUP=$INSTANCE_GROUP
+
 # Forward request logs to Docker log collector
 RUN ln -sf /proc/1/fd/1 /var/log/nginx-controller/agent.log \
   && ln -sf /proc/1/fd/2 /var/log/nginx/error.log

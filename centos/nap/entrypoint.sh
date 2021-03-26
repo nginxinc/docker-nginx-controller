@@ -61,7 +61,10 @@ test -n "${ENV_CONTROLLER_API_URL}" && \
 test -n "${ENV_CONTROLLER_LOCATION}" && \
     location=${ENV_CONTROLLER_LOCATION}
 
-if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_api_url}" -o -n "${location}" ]; then
+test -n "${ENV_CONTROLLER_INSTANCE_GROUP}" && \
+    instance_group=${ENV_CONTROLLER_INSTANCE_GROUP}
+
+if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_api_url}" -o -n "${location}" -o -n "${instance_group}" ]; then
     echo "updating ${agent_conf_file} ..."
 
     if [ ! -f "${agent_conf_file}" ]; then
@@ -88,6 +91,11 @@ if [ -n "${api_key}" -o -n "${instance_name}" -o -n "${controller_api_url}" -o -
     test -n "${location}" && \
     echo " ---> using location = ${location}" && \
     sh -c "sed -i.old -e 's/location_name.*$/location_name = $location/' \
+	${agent_conf_file}"
+
+    test -n "${instance_group}" && \
+    echo " ---> using instance group = ${instance_group}" && \
+    sh -c "sed -i.old -e 's/instance_group.*$/instance_group = $instance_group/' \
 	${agent_conf_file}"
 
     if ! grep -Fq "security = " ${agent_conf_file}; then
