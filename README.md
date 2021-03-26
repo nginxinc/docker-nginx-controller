@@ -17,7 +17,8 @@
   - [4.2 Persisting an Instance Identity through Stops and Starts](#42-persisting-an-instance-identity-through-stops-and-starts)
   - [4.3 Applying a Unique Location to a Container at Run Time](#43-applying-a-unique-location-to-a-container-at-run-time)
   - [4.4 Overriding Agent NGINX Controller configuration](#44-overriding-agent-nginx-controller-configuration)
-  - [4.5 Overriding NGINX Plus version](#45-overriding-nginx-plus-version)
+  - [4.5 Supported run-time variables](#45-supported-run-time-variables)
+  - [4.6 Overriding NGINX Plus version](#46-overriding-nginx-plus-version)
 - [5.0 Support](#50-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -304,7 +305,32 @@ docker run --name mynginx1 -d -e ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4 
 ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4
 ```
 
-### 4.5 Overriding NGINX Plus version
+### 4.5 Supported run-time variables
+
+The following variables could be used to override the default NGINX configuration values during run-time:
+
+1. ENV_CONTROLLER_API_URL
+
+    The new instance will use api url to locate NGINX Controller host.
+
+2. ENV_CONTROLLER_API_KEY
+
+    The new instance will use the specified api key for authentication and communication with NGINX Controller.
+
+3. ENV_CONTROLLER_INSTANCE_NAME
+
+    The new instance will use the specified name to register itself with NGINX Controller.
+
+4. ENV_CONTROLLER_LOCATION
+
+    The new instance will use the specified location already present in NGINX Controller to register itself.
+
+5. ENV_CONTROLLER_INSTANCE_GROUP
+
+    (Feature in development)
+    The new instance will join the specified instance group while registering with NGINX Controller.
+
+### 4.6 Overriding NGINX Plus version
 
 Version of NGINX Plus installed inside docker image could changed using `NGINX_PLUS_VERSION` build time argument.
 `NGINX_PLUS_VERSION` should be set to release number of NGINX Plus e.g. `23`
