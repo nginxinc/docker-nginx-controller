@@ -307,28 +307,15 @@ ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4
 
 ### 4.5 Supported run-time variables
 
-The following variables could be used to override the default NGINX configuration values during run-time:
+You can use the following run-time variables to override the default NGINX configuration values:
 
-1. ENV_CONTROLLER_API_URL
-
-    The new instance will use api url to locate NGINX Controller host.
-
-2. ENV_CONTROLLER_API_KEY
-
-    The new instance will use the specified api key for authentication and communication with NGINX Controller.
-
-3. ENV_CONTROLLER_INSTANCE_NAME
-
-    The new instance will use the specified name to register itself with NGINX Controller.
-
-4. ENV_CONTROLLER_LOCATION
-
-    The new instance will use the specified location already present in NGINX Controller to register itself.
-
-5. ENV_CONTROLLER_INSTANCE_GROUP
-
-    (Feature in development)
-    The new instance will join the specified instance group while registering with NGINX Controller.
+| Variable | Description |
+|-|-|
+| `ENV_CONTROLLER_API_URL` | The NGINX Controller API URL. The new instance will use the specified API URL to locate the NGINX Controller host. |
+| `ENV_CONTROLLER_API_KEY` | The NGINX Controller API key. The new instance will use the specified API key to authenticate and communicate with NGINX Controller. |
+| `ENV_CONTROLLER_INSTANCE_NAME` | The name to use for the instance. The new instance will use the specified name when registering itself with NGINX Controller. |
+| `ENV_CONTROLLER_LOCATION` | The location for the instance. The new instance will use the specified location when registering itself with NGINX Controller. <br> **Note**: The specified location must already exist in NGINX Controller. |
+| `ENV_CONTROLLER_INSTANCE_GROUP` | (Beta) The instance group the instance belongs to. The new instance will join the specified instance group when registering itself with NGINX Controller. <br> **Note**: the specified instance group must already exist in NGINX Controller. |
 
 ### 4.6 Overriding NGINX Plus version
 
