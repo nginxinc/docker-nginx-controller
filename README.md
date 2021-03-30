@@ -17,7 +17,8 @@
   - [4.2 Persisting an Instance Identity through Stops and Starts](#42-persisting-an-instance-identity-through-stops-and-starts)
   - [4.3 Applying a Unique Location to a Container at Run Time](#43-applying-a-unique-location-to-a-container-at-run-time)
   - [4.4 Overriding Agent NGINX Controller configuration](#44-overriding-agent-nginx-controller-configuration)
-  - [4.5 Overriding NGINX Plus version](#45-overriding-nginx-plus-version)
+  - [4.5 Supported run-time variables](#45-supported-run-time-variables)
+  - [4.6 Overriding NGINX Plus version](#46-overriding-nginx-plus-version)
 - [5.0 Support](#50-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -304,7 +305,19 @@ docker run --name mynginx1 -d -e ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4 
 ENV_CONTROLLER_API_URL=https://<fqdn>:8443/1.4
 ```
 
-### 4.5 Overriding NGINX Plus version
+### 4.5 Supported run-time variables
+
+You can use the following run-time variables to override the default NGINX configuration values:
+
+| Variable | Description |
+|-|-|
+| `ENV_CONTROLLER_API_URL` | The NGINX Controller API URL. The new instance will use the specified API URL to locate the NGINX Controller host. |
+| `ENV_CONTROLLER_API_KEY` | The NGINX Controller API key. The new instance will use the specified API key to authenticate and communicate with NGINX Controller. |
+| `ENV_CONTROLLER_INSTANCE_NAME` | The name to use for the instance. The new instance will use the specified name when registering itself with NGINX Controller. |
+| `ENV_CONTROLLER_LOCATION` | The location for the instance. The new instance will use the specified location when registering itself with NGINX Controller. <br> **Note**: The specified location must already exist in NGINX Controller. |
+| `ENV_CONTROLLER_INSTANCE_GROUP` | (Beta) The instance group the instance belongs to. The new instance will join the specified instance group when registering itself with NGINX Controller. <br> **Note**: The specified instance group will be created if it doesn't already exist. |
+
+### 4.6 Overriding NGINX Plus version
 
 Version of NGINX Plus installed inside docker image could changed using `NGINX_PLUS_VERSION` build time argument.
 `NGINX_PLUS_VERSION` should be set to release number of NGINX Plus e.g. `23`
