@@ -62,6 +62,7 @@ ENV ENV_CONTROLLER_API_KEY=$API_KEY
 ARG STORE_UUID
 RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
+  && sed -i 's,-n "${NGINX_GPGKEY}",true,' install.sh \
   && sh ./install.sh -y
 
 
