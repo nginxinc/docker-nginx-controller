@@ -60,6 +60,7 @@ RUN set -ex \
   # Install Controller Agent
   && curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
+  && sed -i 's,-n "${NGINX_GPGKEY}",true,' install.sh \
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
   && rm /etc/ssl/nginx/nginx-repo.* \
