@@ -22,8 +22,8 @@ ENV ENV_CONTROLLER_LOCATION=$LOCATION
 ARG INSTANCE_GROUP
 ENV ENV_CONTROLLER_INSTANCE_GROUP=$INSTANCE_GROUP
 
-# NGXIN Plus release e.g 23
-ARG NGINX_PLUS_VERSION=23
+# NGXIN Plus release e.g 24
+ARG NGINX_PLUS_VERSION=24
 
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context

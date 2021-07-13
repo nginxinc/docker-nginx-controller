@@ -1,10 +1,10 @@
 ARG STORE_UUID=False
-FROM debian:stretch-slim as nginx-installer
+FROM debian:buster-slim as nginx-installer
 
 LABEL maintainer="NGINX Controller Engineering"
 
-# NGXIN Plus release e.g 23
-ARG NGINX_PLUS_VERSION=23
+# NGXIN Plus release e.g 24
+ARG NGINX_PLUS_VERSION=24
 
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
@@ -34,7 +34,7 @@ RUN set -ex \
   && echo "Acquire::https::plus-pkgs.nginx.com::Verify-Host \"true\";" >> /etc/apt/apt.conf.d/90nginx \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslCert     \"/etc/ssl/nginx/nginx-repo.crt\";" >> /etc/apt/apt.conf.d/90nginx \
   && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
-  && printf "deb https://plus-pkgs.nginx.com/debian stretch nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
+  && printf "deb https://plus-pkgs.nginx.com/debian buster nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
   # NGINX Javascript module needed for APIM
   && apt-get update && apt-get install -y nginx-plus=${NGINX_PLUS_VERSION}* nginx-plus-module-njs=${NGINX_PLUS_VERSION}*
 
@@ -51,17 +51,17 @@ RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
-ARG NGINX_PLUS_VERSION=23
+ARG NGINX_PLUS_VERSION=24
 RUN if [ "$NGINX_PLUS_VERSION" -lt 22 ] ; \
 	then \
 	echo "NGINX Plus version ${NGINX_PLUS_VERSION} is not supported by NAP" \
 	&& exit 1 ; \
 	elif [ "$NGINX_PLUS_VERSION" -eq 22 ] ; then \
-	apt-get install -y app-protect-compiler=5.1.0-1~stretch \
-   	app-protect-engine=5.1.0-1~stretch \
-   	app-protect-plugin=3.243.1-1~stretch \
-   	nginx-plus-module-appprotect=22+3.243.1-1~stretch \
-	app-protect=22+3.243.1-1~stretch ; \
+	apt-get install -y app-protect-compiler=5.1.0-1~buster \
+   	app-protect-engine=5.1.0-1~buster \
+   	app-protect-plugin=3.243.1-1~buster \
+   	nginx-plus-module-appprotect=22+3.243.1-1~buster \
+	app-protect=22+3.243.1-1~buster ; \
 	else \
 	apt-get install -y app-protect ; \
 	fi
