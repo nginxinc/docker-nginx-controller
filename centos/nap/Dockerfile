@@ -31,6 +31,7 @@ RUN set -ex \
   done; \
   test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
   wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/nginx-plus-7.4.repo \
+  && wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/app-protect-7.repo \
   # NGINX Javascript module needed for APIM
   && yum update && yum -y install nginx-plus-${NGINX_PLUS_VERSION}* nginx-plus-module-njs-${NGINX_PLUS_VERSION}*
 
