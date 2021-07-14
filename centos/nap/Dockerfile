@@ -3,8 +3,8 @@ FROM centos:7 as nginx-installer
 
 LABEL maintainer="NGINX Controller Engineering"
 
-# NGXIN Plus release e.g 23
-ARG NGINX_PLUS_VERSION=23
+# NGXIN Plus release e.g 24
+ARG NGINX_PLUS_VERSION=24
 
 # Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
 # and copy to the build context
@@ -48,7 +48,7 @@ RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
-ARG NGINX_PLUS_VERSION=23
+ARG NGINX_PLUS_VERSION=24
 RUN if [ "$NGINX_PLUS_VERSION" -lt 22 ] ; then \
 	echo "NGINX Plus version ${NGINX_PLUS_VERSION} is not supported by NAP" \
 	&& exit 1 ; \
