@@ -19,7 +19,11 @@
   - [4.4 Overriding Agent NGINX Controller configuration](#44-overriding-agent-nginx-controller-configuration)
   - [4.5 Supported run-time variables](#45-supported-run-time-variables)
   - [4.6 Overriding NGINX Plus version](#46-overriding-nginx-plus-version)
-- [5.0 Support](#50-support)
+- [5.0 Build Unprivileged Docker Image](#50-build-unprivileged-docker-image)
+  - [5.1 Required changes in Dockerfile](#51-required-changes-in-dockerfile)
+  - [5.2 Required changes in entrypoint.sh](#52-required-changes-in-entrypointsh)
+  - [5.3 New build arguments](#53-new-build-arguments)
+- [6.0 Support](#60-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -324,6 +328,62 @@ docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent 
 ```
 
 For NAP-Enabled NGINX Docker Containers, information about App Security requirements can be found [here](https://docs.nginx.com/nginx-controller/admin-guides/install/try-nginx-controller-app-sec/)
-## 5.0 Support
+## 5.0 Build Unprivileged Docker Image
+
+### 5.1 Required changes in Dockerfile
+Add the following snippet under the `ARG NGINX_PLUS_VERSION=nn` line:
+```bash
+ARG EXPOSE_PORT=8080
+ENV NGINX_EXPOSE_PORT=$EXPOSE_PORT
+
+ARG NON_ROOT_USER=nginx
+ENV CONTROLLER_USER=$NON_ROOT_USER
+
+ARG NON_ROOT_GROUP=nginx
+ENV CONTROLLER_GROUP=$NON_ROOT_GROUP
+
+ARG NAP_SYSLOG_PORT=5114
+ENV LISTENERS_NAP_SYSLOG_PORT=$NAP_SYSLOG_PORT
+```
+Replace the `EXPOSE 80` line with the following snippet:
+```bash
+# Update ownership for the necessary filesystem objects for running under non-root user
+RUN chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /var/run/ \
+  && chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /var/log/nginx/ \
+  && chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /var/cache/nginx/ \
+  && chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /etc/controller-agent/ \
+  && chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /etc/nginx/ \
+  && chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /var/log/app_protect/ || true \
+  && chown -R $CONTROLLER_USER:$CONTROLLER_GROUP /opt/app_protect/ || true \  
+  && sed -i "s,listen       80 default_server;,listen       $NGINX_EXPOSE_PORT default_server;," /etc/nginx/conf.d/default.conf \
+  && sed -i '/user  nginx;/d' /etc/nginx/nginx.conf
+
+USER $CONTROLLER_USER
+
+EXPOSE $NGINX_EXPOSE_PORT
+```
+Examples of unprivileged docker files can be found in `unprivileged/examples` directory.
+### 5.2 Required changes in entrypoint.sh
+Only applicable to images running NGINX App Protect - remove prefixes `/bin/su -s` under `# Launch NAP` (two occurrences).
+
+The result should look similar to the following snippet:
+```bash
+# Launch NAP
+/bin/bash -c '/opt/app_protect/bin/bd_agent &' nginx
+bd_agent_pid=$(pgrep bd_agent)
+/bin/bash -c "/usr/share/ts/bin/bd-socket-plugin tmm_count 4 proc_cpuinfo_cpu_mhz 2000000 total_xml_memory 307200000 total_umu_max_size 3129344 sys_max_account_id 1024 no_static_config 2>&1 > /var/log/app_protect/bd-socket-plugin.log &" nginx
+bd_socket_pid=$(pgrep bd-socket)
+```
+### 5.3 New build arguments
+Here is the list of new build arguments introduced by the changes above:
+| Argument | Description |
+|-|-|
+| `EXPOSE_PORT` | The port number to expose and listen on for NGINX. (Default `8080`) |
+| `NON_ROOT_USER` | The name of unprivileged user.  (Default `nginx`) |
+| `NON_ROOT_GROUP` | The name of unprivileged group. (Default `nginx`) |
+| `NAP_SYSLOG_PORT` | The port number for syslog listener of NGINX App Protect events. (Default `5114`) |
+
+The build and run instructions are the same. Please refer to [2. How to Build and Run an NGINX Controller-Enabled NGINX Plus Image](#2-how-to-build-and-run-an-nginx-controller-enabled-nginx-plus-image).
+## 6.0 Support
 
 This project is supported and has been validated with Controller Agent v3.10 and later.
