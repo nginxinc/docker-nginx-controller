@@ -6,15 +6,15 @@ LABEL maintainer="NGINX Controller Engineering"
 # NGXIN Plus release e.g 24
 ARG NGINX_PLUS_VERSION=24
 
-# Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
-# and copy to the build context
-COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY entrypoint.sh /
 
 ENV NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+
 # Install NGINX Plus
-RUN set -ex \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+  --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  set -ex \
   && yum -y update && yum -y upgrade \
   && yum -y install epel-release \
   && yum -y install wget ca-certificates epel-release curl sudo vim procps gnupg binutils net-tools \
@@ -49,7 +49,9 @@ RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
 ARG NGINX_PLUS_VERSION=24
-RUN if [ "$NGINX_PLUS_VERSION" -lt 22 ] ; then \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+    --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  if [ "$NGINX_PLUS_VERSION" -lt 22 ] ; then \
 	echo "NGINX Plus version ${NGINX_PLUS_VERSION} is not supported by NAP" \
 	&& exit 1 ; \
 	elif [ "$NGINX_PLUS_VERSION" -eq 22 ] ; \
@@ -64,8 +66,7 @@ RUN sed -i "6 a load_module modules/ngx_http_app_protect_module.so;" /etc/nginx/
 FROM nap-installer as cleaner
 # cleanup sensitive nginx-plus data
 RUN gpg --list-keys
-RUN rm /etc/ssl/nginx/nginx-repo.* \
-  && rm /etc/yum.repos.d/nginx-plus-7.4.repo \
+RUN rm /etc/yum.repos.d/nginx-plus-7.4.repo \
   && gpg --batch --delete-keys $NGINX_GPGKEY
 
 FROM cleaner as runner

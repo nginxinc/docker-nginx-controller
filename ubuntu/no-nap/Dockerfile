@@ -28,14 +28,13 @@ ENV ENV_CONTROLLER_INSTANCE_GROUP=$INSTANCE_GROUP
 # NGXIN Plus release e.g 24
 ARG NGINX_PLUS_VERSION=24
 
-# Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
-# and copy to the build context
-COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY entrypoint.sh /
 
 # Install NGINX Plus
-RUN set -ex \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+  --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  set -ex \
   && apt-get update \
   && apt-get install --no-install-recommends --no-install-suggests -y \
   curl \
@@ -79,7 +78,6 @@ RUN set -ex \
   && sed -i 's,-n "${NGINX_GPGKEY}",true,' install.sh \
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
-  && rm /etc/ssl/nginx/nginx-repo.* \
   && rm /etc/apt/sources.list.d/nginx-plus.list \
   && rm /etc/apt/apt.conf.d/90nginx \
   && apt-key del "$NGINX_GPGKEY"

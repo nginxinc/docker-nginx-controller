@@ -21,15 +21,15 @@ ENV CONTROLLER_GROUP=$NON_ROOT_GROUP
 ARG NAP_SYSLOG_PORT=5114
 ENV LISTENERS_NAP_SYSLOG_PORT=$NAP_SYSLOG_PORT
 
-# Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
-# and copy to the build context
-COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY entrypoint.sh /
 
 ENV NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62
+
 # Install NGINX Plus
-RUN set -ex \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+  --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  set -ex \
   && apt-get update \
   && apt-get install --no-install-recommends --no-install-suggests -y \
   curl \
@@ -81,7 +81,9 @@ RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
 ARG NGINX_PLUS_VERSION=24
-RUN if [ "$NGINX_PLUS_VERSION" -lt 23 ] ; then \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+  --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  if [ "$NGINX_PLUS_VERSION" -lt 23 ] ; then \
 	echo "NGINX Plus version ${NGINX_PLUS_VERSION} is not supported by NAP" \
 	&& exit 1 ; \
 	else \
@@ -92,8 +94,7 @@ RUN sed -i "6 a load_module modules/ngx_http_app_protect_module.so;" /etc/nginx/
 
 FROM nap-installer as cleaner
 # cleanup sensitive nginx-plus data
-RUN rm /etc/ssl/nginx/nginx-repo.* \
-  && rm /etc/apt/sources.list.d/nginx-plus.list \
+RUN rm /etc/apt/sources.list.d/nginx-plus.list \
   && rm /etc/apt/apt.conf.d/90nginx \
   && apt-key del $NGINX_GPGKEY \
   && rm -rf /var/lib/apt/lists/*
