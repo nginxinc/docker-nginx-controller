@@ -97,6 +97,8 @@ Here's how to build the container image with the Controller Agent inside, based 
 
     The `DOCKER_BUILDKIT=1` enables `docker build` to recognize the `--secret` flag which allows the user to pass secret information to be used in the Dockerfile for building docker images in a safe way that will not end up stored in the final image. This is a recommended practice for the handling of the certificate and private key for NGINX repository access (`nginx-repo.crt` and `nginx-repo.key` files). More information [here](https://docs.docker.com/develop/develop-images/build_enhancements/#new-docker-build-secret-information).
 
+    > **Note**: If you are using an older version of Docker (less than version 20), you may need to insert the following line at the top of your Dockerfile before building your image: `syntax=docker/dockerfile:experimental`
+
 4. After the image is built, view the list of Docker images:
 
     ```bash
