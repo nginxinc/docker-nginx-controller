@@ -92,8 +92,12 @@ Here's how to build the container image with the Controller Agent inside, based 
     For example:
 
     ```bash
-    sudo docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' -t nginx-agent .
+    sudo DOCKER_BUILDKIT=1 docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --secret id=nginx-crt,src=nginx-repo.crt --secret id=nginx-key,src=nginx-repo.key -t nginx-agent .
     ```
+
+    The `DOCKER_BUILDKIT=1` enables `docker build` to recognize the `--secret` flag which allows the user to pass secret information to be used in the Dockerfile for building docker images in a safe way that will not end up stored in the final image. This is a recommended practice for the handling of the certificate and private key for NGINX repository access (`nginx-repo.crt` and `nginx-repo.key` files). More information [here](https://docs.docker.com/develop/develop-images/build_enhancements/#new-docker-build-secret-information).
+
+    > **Note**: If you are using an older version of Docker (less than version 20), you may need to insert the following line at the top of your Dockerfile before building your image: `syntax=docker/dockerfile:experimental`
 
 4. After the image is built, view the list of Docker images:
 
@@ -276,7 +280,7 @@ Each new container started from an NGINX Controller-enabled Docker image is repo
 `VAR STORE_UUID=True` can be set during the image build process and applies to all containers derived from the image.
 
 ```bash
-sudo docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg STORE_UUID=True -t nginx-agent .
+sudo DOCKER_BUILDKIT=1 docker build --secret id=nginx-crt,src=nginx-repo.crt --secret id=nginx-key,src=nginx-repo.key --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg STORE_UUID=True -t nginx-agent .
 ```
 
 ### 4.3 Applying a Unique Location to a Container at Run Time
@@ -324,7 +328,7 @@ Version of NGINX Plus installed inside docker image could changed using `NGINX_P
 `NGINX_PLUS_VERSION` should be set to release number of NGINX Plus e.g. `24`
 
 ```bash
-docker build --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg NGINX_PLUS_VERSION=22 -t nginx-agent .
+DOCKER_BUILDKIT=1 docker build --secret id=nginx-crt,src=nginx-repo.crt --secret id=nginx-key,src=nginx-repo.key --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg NGINX_PLUS_VERSION=22 -t nginx-agent .
 ```
 
 For NAP-Enabled NGINX Docker Containers, information about App Security requirements can be found [here](https://docs.nginx.com/nginx-controller/admin-guides/install/try-nginx-controller-app-sec/)

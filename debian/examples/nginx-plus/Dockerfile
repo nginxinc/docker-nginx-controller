@@ -3,13 +3,10 @@ FROM debian:stretch-slim
 
 LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 
-# Download certificate and key from the customer portal (https://cs.nginx.com)
-# and copy to the build context
-COPY nginx-repo.crt /etc/ssl/nginx/
-COPY nginx-repo.key /etc/ssl/nginx/
-
 # Install NGINX Plus
-RUN set -x \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+ --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+ set -x \
  && apt-get update && apt-get upgrade -y \
  && apt-get install --no-install-recommends --no-install-suggests -y apt-transport-https ca-certificates gnupg1 procps wget curl\
  && \

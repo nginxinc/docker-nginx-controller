@@ -25,14 +25,13 @@ ENV ENV_CONTROLLER_INSTANCE_GROUP=$INSTANCE_GROUP
 # NGXIN Plus release e.g 24
 ARG NGINX_PLUS_VERSION=24
 
-# Download certificate (nginx-repo.crt) and key (nginx-repo.key) from the customer portal (https://cs.nginx.com)
-# and copy to the build context
-COPY nginx-repo.* /etc/ssl/nginx/
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 RUN chmod +r /etc/ssl/nginx/nginx-repo.*
 
 # Install NGINX Plus
-RUN set -ex \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+  --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  set -ex \
   && yum -y update && yum -y upgrade \
   && yum -y groupinstall 'Development Tools' \
   && yum -y install \
@@ -67,7 +66,6 @@ RUN set -ex \
   && sed -i 's,-n "${NGINX_GPGKEY}",true,' install.sh \
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
-  && rm /etc/ssl/nginx/nginx-repo.* \
   && rm /etc/yum.repos.d/nginx-plus-amazon2.repo \
   && gpg --batch --delete-keys "$NGINX_GPGKEY"
 
