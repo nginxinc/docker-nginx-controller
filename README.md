@@ -332,6 +332,15 @@ DOCKER_BUILDKIT=1 docker build --secret id=nginx-crt,src=nginx-repo.crt --secret
 ```
 
 For NAP-Enabled NGINX Docker Containers, information about App Security requirements can be found [here](https://docs.nginx.com/nginx-controller/admin-guides/install/try-nginx-controller-app-sec/)
+
+### 4.7 Configuring and updating agent
+
+When manually editing the `agent.conf` file or upgrading the NGINX Agent service running inside the container, use `--restart always` with `docker run`, as restarting the NGINX Agent service will trigger the container to exit.
+
+```bash
+docker run --restart always --name mynginx -d nginx-agent
+```
+
 ## 5.0 Build Unprivileged Docker Image
 
 ### 5.1 Required changes in Dockerfile
