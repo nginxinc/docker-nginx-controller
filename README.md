@@ -325,7 +325,7 @@ You can use the following run-time variables to override the default NGINX confi
 ### 4.6 Overriding NGINX Plus version
 
 Version of NGINX Plus installed inside docker image could changed using `NGINX_PLUS_VERSION` build time argument.
-`NGINX_PLUS_VERSION` should be set to release number of NGINX Plus e.g. `24`
+`NGINX_PLUS_VERSION` should be set to release number of NGINX Plus e.g. `25`
 
 ```bash
 DOCKER_BUILDKIT=1 docker build --secret id=nginx-crt,src=nginx-repo.crt --secret id=nginx-key,src=nginx-repo.key --build-arg CONTROLLER_URL=https://<fqdn>/install/controller-agent --build-arg API_KEY='abcdefxxxxxx' --build-arg NGINX_PLUS_VERSION=22 -t nginx-agent .
