@@ -1,3 +1,4 @@
+#syntax=docker/dockerfile:experimental
 FROM amazonlinux:2
 
 LABEL maintainer="NGINX Controller Engineering"
@@ -22,11 +23,12 @@ ENV ENV_CONTROLLER_LOCATION=$LOCATION
 ARG INSTANCE_GROUP
 ENV ENV_CONTROLLER_INSTANCE_GROUP=$INSTANCE_GROUP
 
-# NGXIN Plus release e.g 24
-ARG NGINX_PLUS_VERSION=24
+# NGXIN Plus release e.g 25
+ARG NGINX_PLUS_VERSION=25
 
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
-RUN chmod +r /etc/ssl/nginx/nginx-repo.*
+RUN mkdir "/etc/ssl/nginx/"
+RUN chmod +r /etc/ssl/nginx/
 
 # Install NGINX Plus
 RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \

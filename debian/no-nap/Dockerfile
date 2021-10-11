@@ -22,8 +22,8 @@ ENV ENV_CONTROLLER_LOCATION=$LOCATION
 ARG INSTANCE_GROUP
 ENV ENV_CONTROLLER_INSTANCE_GROUP=$INSTANCE_GROUP
 
-# NGXIN Plus release e.g 24
-ARG NGINX_PLUS_VERSION=24
+# NGXIN Plus release e.g 25
+ARG NGINX_PLUS_VERSION=25
 
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY entrypoint.sh /
@@ -48,11 +48,11 @@ RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644
     apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; \
   done; \
   test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
-  echo "Acquire::https::plus-pkgs.nginx.com::Verify-Peer \"true\";" >> /etc/apt/apt.conf.d/90nginx \
-  && echo "Acquire::https::plus-pkgs.nginx.com::Verify-Host \"true\";" >> /etc/apt/apt.conf.d/90nginx \
-  && echo "Acquire::https::plus-pkgs.nginx.com::SslCert     \"/etc/ssl/nginx/nginx-repo.crt\";" >> /etc/apt/apt.conf.d/90nginx \
-  && echo "Acquire::https::plus-pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90nginx \
-  && printf "deb https://plus-pkgs.nginx.com/debian buster nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
+  echo "Acquire::https::pkgs.nginx.com::Verify-Peer \"true\";" >> /etc/apt/apt.conf.d/90pkgs-nginx \
+  && echo "Acquire::https::pkgs.nginx.com::Verify-Host \"true\";" >> /etc/apt/apt.conf.d/90pkgs-nginx \
+  && echo "Acquire::https::pkgs.nginx.com::SslCert     \"/etc/ssl/nginx/nginx-repo.crt\";" >> /etc/apt/apt.conf.d/90pkgs-nginx \
+  && echo "Acquire::https::pkgs.nginx.com::SslKey      \"/etc/ssl/nginx/nginx-repo.key\";" >> /etc/apt/apt.conf.d/90pkgs-nginx \
+  && printf "deb https://pkgs.nginx.com/plus/debian buster nginx-plus\n" > /etc/apt/sources.list.d/nginx-plus.list \
   # NGINX Javascript module needed for APIM
   && apt-get update && apt-get install -y nginx-plus=${NGINX_PLUS_VERSION}* nginx-plus-module-njs=${NGINX_PLUS_VERSION}*  \
   && rm -rf /var/lib/apt/lists/* \
@@ -63,7 +63,7 @@ RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644
   && sh ./install.sh -y \
   # cleanup sensitive nginx-plus data
   && rm /etc/apt/sources.list.d/nginx-plus.list \
-  && rm /etc/apt/apt.conf.d/90nginx \
+  && rm /etc/apt/apt.conf.d/90pkgs-nginx \
   && apt-key del "$NGINX_GPGKEY"
 
 # Forward request logs to Docker log collector
