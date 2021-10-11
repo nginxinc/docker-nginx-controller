@@ -1,4 +1,3 @@
-#syntax=docker/dockerfile:experimental
 FROM amazonlinux:2
 
 LABEL maintainer="NGINX Controller Engineering"
