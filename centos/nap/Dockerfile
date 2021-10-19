@@ -3,8 +3,8 @@ FROM centos:7 as nginx-installer
 
 LABEL maintainer="NGINX Controller Engineering"
 
-# NGXIN Plus release e.g 24
-ARG NGINX_PLUS_VERSION=24
+# NGXIN Plus release e.g 25
+ARG NGINX_PLUS_VERSION=25
 
 COPY nginx-plus-api.conf /etc/nginx/conf.d/
 COPY entrypoint.sh /
@@ -41,14 +41,16 @@ ARG CONTROLLER_URL
 ARG API_KEY
 ENV ENV_CONTROLLER_API_KEY=$API_KEY
 ARG STORE_UUID
-RUN curl -k -sS -L ${CONTROLLER_URL} > install.sh \
+RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
+    --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
+  curl -k -sS -L ${CONTROLLER_URL} > install.sh \
   && sed -i 's/^assume_yes=""/assume_yes="-y"/' install.sh \
   && sed -i 's,-n "${NGINX_GPGKEY}",true,' install.sh \
   && sh ./install.sh -y
 
 FROM agent-installer as nap-installer
 # Install nginx-app-protect
-ARG NGINX_PLUS_VERSION=24
+ARG NGINX_PLUS_VERSION=25
 RUN --mount=type=secret,id=nginx-crt,dst=/etc/ssl/nginx/nginx-repo.crt,mode=0644 \
     --mount=type=secret,id=nginx-key,dst=/etc/ssl/nginx/nginx-repo.key,mode=0644 \
   if [ "$NGINX_PLUS_VERSION" -lt 22 ] ; then \
