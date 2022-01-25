@@ -314,7 +314,7 @@ You can use the following run-time variables to override the default NGINX confi
 | `ENV_CONTROLLER_API_KEY` | The NGINX Controller API key. The new instance will use the specified API key to authenticate and communicate with NGINX Controller. |
 | `ENV_CONTROLLER_INSTANCE_NAME` | The name to use for the instance. The new instance will use the specified name when registering itself with NGINX Controller. |
 | `ENV_CONTROLLER_LOCATION` | The location for the instance. The new instance will use the specified location when registering itself with NGINX Controller. <br> **Note**: The specified location must already exist in NGINX Controller. |
-| `ENV_CONTROLLER_INSTANCE_GROUP` | (Beta) The instance group the instance belongs to. The new instance will join the specified instance group when registering itself with NGINX Controller. <br> **Note**: The specified instance group will be created if it doesn't already exist. |
+| `ENV_CONTROLLER_INSTANCE_GROUP` | The instance group the instance belongs to. The new instance will join the specified instance group when registering itself with NGINX Controller. <br> **Note**: The specified instance group will be created if it doesn't already exist. |
 
 ### 4.6 Overriding NGINX Plus version
 
